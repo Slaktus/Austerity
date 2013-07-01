@@ -1,0 +1,4 @@
+Austerity
+=========
+
+Naked and clean
