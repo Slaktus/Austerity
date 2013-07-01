@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{04088E00-976B-D3D8-8BE1-899B6E03C0CF}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE_WIN;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_1_5;UNITY_4_1;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+	<Reference Include="System" />
+    <Reference Include="System.XML" />
+	<Reference Include="System.Core" />
+	<Reference Include="UnityEngine">
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+	</Reference>
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Assets\Scripts\ArenaMeshColorController.cs" />
+     <Compile Include="Assets\Scripts\AvatarBeamWeaponConfig.cs" />
+     <Compile Include="Assets\Scripts\AvatarMissileWeaponConfig.cs" />
+     <Compile Include="Assets\Scripts\AvatarMovementController.cs" />
+     <Compile Include="Assets\Scripts\AvatarProjectileWeaponConfig.cs" />
+     <Compile Include="Assets\Scripts\AvatarWeaponController.cs" />
+     <Compile Include="Assets\Scripts\BeamEnvelopeController.cs" />
+     <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig01.cs" />
+     <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig02.cs" />
+     <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig03.cs" />
+     <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig04.cs" />
+     <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig05.cs" />
+     <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig06.cs" />
+     <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig07.cs" />
+     <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig08.cs" />
+     <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig09.cs" />
+     <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig10.cs" />
+     <Compile Include="Assets\Scripts\ChamberMeshColorController.cs" />
+     <Compile Include="Assets\Scripts\CollectableController.cs" />
+     <Compile Include="Assets\Scripts\CursorController.cs" />
+     <Compile Include="Assets\Scripts\EnemyDamageController.cs" />
+     <Compile Include="Assets\Scripts\EnemyMeshColorController.cs" />
+     <Compile Include="Assets\Scripts\EnemyMovementController.cs" />
+     <Compile Include="Assets\Scripts\EnemyScaleController.cs" />
+     <Compile Include="Assets\Scripts\FromMeshColorController.cs" />
+     <Compile Include="Assets\Scripts\GameCameraController.cs" />
+     <Compile Include="Assets\Scripts\GameController.cs" />
+     <Compile Include="Assets\Scripts\GenerationColorController.cs" />
+     <Compile Include="Assets\Scripts\GenerationCounterController.cs" />
+     <Compile Include="Assets\Scripts\GenerationMeshColorController.cs" />
+     <Compile Include="Assets\Scripts\Kelipot.cs" />
+     <Compile Include="Assets\Scripts\LogoSpinner.cs" />
+     <Compile Include="Assets\Scripts\Malkut.cs" />
+     <Compile Include="Assets\Scripts\MissileWeaponConfigs\MissileConfig01.cs" />
+     <Compile Include="Assets\Scripts\MissileWeaponConfigs\MissileConfig02.cs" />
+     <Compile Include="Assets\Scripts\MissileWeaponConfigs\MissileConfig03.cs" />
+     <Compile Include="Assets\Scripts\MissileWeaponConfigs\MissileConfig04.cs" />
+     <Compile Include="Assets\Scripts\MissileWeaponConfigs\MissileConfig05.cs" />
+     <Compile Include="Assets\Scripts\MissileWeaponConfigs\MissileConfig06.cs" />
+     <Compile Include="Assets\Scripts\MissileWeaponConfigs\MissileConfig07.cs" />
+     <Compile Include="Assets\Scripts\MissileWeaponConfigs\MissileConfig08.cs" />
+     <Compile Include="Assets\Scripts\MissileWeaponConfigs\MissileConfig09.cs" />
+     <Compile Include="Assets\Scripts\MissileWeaponConfigs\MissileConfig10.cs" />
+     <Compile Include="Assets\Scripts\ParticleController.cs" />
+     <Compile Include="Assets\Scripts\ProjectileWeaponConfigs\ProjectileConfig01.cs" />
+     <Compile Include="Assets\Scripts\ProjectileWeaponConfigs\ProjectileConfig02.cs" />
+     <Compile Include="Assets\Scripts\ProjectileWeaponConfigs\ProjectileConfig03.cs" />
+     <Compile Include="Assets\Scripts\ProjectileWeaponConfigs\ProjectileConfig04.cs" />
+     <Compile Include="Assets\Scripts\ProjectileWeaponConfigs\ProjectileConfig05.cs" />
+     <Compile Include="Assets\Scripts\ProjectileWeaponConfigs\ProjectileConfig06.cs" />
+     <Compile Include="Assets\Scripts\ProjectileWeaponConfigs\ProjectileConfig07.cs" />
+     <Compile Include="Assets\Scripts\ProjectileWeaponConfigs\ProjectileConfig08.cs" />
+     <Compile Include="Assets\Scripts\ProjectileWeaponConfigs\ProjectileConfig09.cs" />
+     <Compile Include="Assets\Scripts\ProjectileWeaponConfigs\ProjectileConfig10.cs" />
+     <Compile Include="Assets\Scripts\RimOccluderScaleController.cs" />
+     <Compile Include="Assets\Scripts\ScaleController.cs" />
+     <Compile Include="Assets\Scripts\Sefirot.cs" />
+     <Compile Include="Assets\Scripts\SkillTreeConfiguration.cs" />
+     <Compile Include="Assets\Scripts\SkillTreeController.cs" />
+     <Compile Include="Assets\Scripts\TOOCOMPLEXGenerationCounterController.cs" />
+     <Compile Include="Assets\Scripts\TrailController.cs" />
+     <Compile Include="Assets\Scripts\WeaponBeamController.cs" />
+     <Compile Include="Assets\Scripts\WeaponBulletController.cs" />
+     <Compile Include="Assets\Scripts\WeaponMissileController.cs" />
+     <None Include="Assets\Materials\Shaders\UnlitColorAlpha.shader" />
+     <None Include="Assets\Plugins\TTFText\TTFText\Editor\Triangulation.LICENSE.txt" />
+     <None Include="Assets\Materials\Shaders\EarlyInvertColor.shader" />
+     <None Include="Assets\Materials\Shaders\InvertColorTexture.shader" />
+     <None Include="Assets\Plugins\GoKit\easing\easeEquationsLicense.txt" />
+     <None Include="Assets\Materials\Shaders\MultiplySolidColor.shader" />
+     <None Include="Assets\Materials\Shaders\UnlitColor.shader" />
+     <None Include="Assets\Materials\Shaders\LateInvertColor.shader" />
+     <None Include="Assets\Plugins\TTFText\TTFText\Libraries\Win32\freetype248.LICENSE.txt" />
+     <None Include="Assets\Plugins\TTFText\TTFText\Editor\FTSharp.LICENSE.txt" />
+ <Reference Include="ttftext_3p_freetype_cs">
+ <HintPath>Assets\Plugins\TTFText\TTFText\Plugins\ttftext_3p_freetype_cs.dll</HintPath>
+ </Reference>
+ <Reference Include="ttftext_3p_triangulation_glu">
+ <HintPath>Assets\Plugins\TTFText\TTFText\Plugins\ttftext_3p_triangulation_glu.dll</HintPath>
+ </Reference>
+ <Reference Include="ttftext_lite">
+ <HintPath>Assets\Plugins\TTFText\TTFText\Plugins\ttftext_lite.dll</HintPath>
+ </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{70D32F83-2789-112F-C5D8-2857D5604CE9}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	   Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  
+</Project>
