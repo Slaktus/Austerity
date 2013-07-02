@@ -52,6 +52,7 @@ public class WeaponMissileController : MonoBehaviour {
 	private void SimulateExplosion () {
 		Collider[] colliders = Physics.OverlapSphere( thisTransform.position , explosionRadius );
 		foreach ( Collider hitObject in colliders ) {
+			Debug.Log( hitObject );
 			if ( hitObject.tag == "Enemy" ) {
 				hitObjectTransform = hitObject.transform;
 				hitObjectTransform.SendMessage( "IncrementScaleTween" , scaleIncrementMultiplier );
@@ -60,6 +61,12 @@ public class WeaponMissileController : MonoBehaviour {
 				explosionStrength = Mathf.Clamp( explosionRadius - Vector3.Magnitude( thisTransform.position - hitObjectTransform.position ) , 0 , explosionRadius );
 				explosionStrength /= explosionRadius;
 				hitObjectTransform.parent.rigidbody.AddForce( ( explosionDirection * explosionForce ) * explosionStrength );
+			} else if ( hitObject.tag == "Geometry" ) {
+				hitObjectTransform = hitObject.transform.parent.parent;
+				hitObjectTransform.SendMessage( "DecrementScaleTween" , scaleIncrementMultiplier );
+				explosionDirection = Vector3.Normalize( hitObjectTransform.position - thisTransform.position );
+				explosionStrength = Mathf.Clamp( explosionRadius - Vector3.Magnitude( thisTransform.position - hitObjectTransform.position ) , 0 , explosionRadius );
+				explosionStrength /= explosionRadius;
 			}
 		}
 	}

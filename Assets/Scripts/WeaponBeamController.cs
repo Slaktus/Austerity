@@ -24,6 +24,9 @@ public class WeaponBeamController : MonoBehaviour {
 		if ( targetTransform.tag == "Enemy" ) {
 			targetTransform.SendMessage( "IncrementScaleTween" , scaleIncrementMultiplier );
 			targetTransform.parent.SendMessage( "IncrementDrag" , dragIncrementMultiplier );
+		} else if ( targetTransform.tag == "Geometry" ) {
+			targetTransform = targetTransform.parent.parent;
+			targetTransform.SendMessage( "DecrementScaleTween" , scaleIncrementMultiplier );
 		}
 	}
 	

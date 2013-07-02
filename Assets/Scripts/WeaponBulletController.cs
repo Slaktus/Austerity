@@ -22,9 +22,13 @@ public class WeaponBulletController : MonoBehaviour {
 		targetTransform = collision.transform;
 		ContactPoint contact = collision.contacts[0];
 		hitEffect = Instantiate( bulletHitEffect , thisTransform.position , Quaternion.LookRotation( rigidbody.velocity.normalized , Vector3.forward ) ) as GameObject;
-		if ( collision.transform.tag == "Enemy" ) {
+		if ( targetTransform.tag == "Enemy" ) {
 			targetTransform.GetChild( 0 ).SendMessage( "IncrementScaleTween" , scaleIncrementMultiplier );
 			targetTransform.SendMessage( "IncrementDrag" , dragIncrementMultiplier );
+			targetTransform.gameObject.rigidbody.AddForceAtPosition( -rigidbody.velocity.normalized * pushbackForce , contact.point );
+			CleanUpBullet();
+		} else if ( targetTransform.tag == "Geometry" ) {
+			targetTransform.SendMessage( "DecrementScaleTween" , scaleIncrementMultiplier );
 			targetTransform.gameObject.rigidbody.AddForceAtPosition( -rigidbody.velocity.normalized * pushbackForce , contact.point );
 			CleanUpBullet();
 		}

@@ -94,9 +94,11 @@ public class EnemyScaleController : MonoBehaviour {
 		movementScript.enabled = true;
 	}
 	
+	public GameObject[] geometry;
 	public GameObject explosion;
 	public GameObject explosionLite;
 	private GameObject explosionEffect;
+	private GameObject newGeometry;
 	
 	private void CleanUpEnemy () {
 		if ( !quickCleanup ) {
@@ -104,6 +106,22 @@ public class EnemyScaleController : MonoBehaviour {
 			targetTransform = nearestArena.transform;
 			if ( targetScale.x > Vector2.Distance( targetTransform.position , thisTransform.position ) ) {
 				targetTransform.SendMessage( "ScaleUpTween" );
+				Debug.Log( nearestArena.GetComponent< ArenaMeshColorController >().chamberType );
+				if ( nearestArena.GetComponent< ArenaMeshColorController >().chamberType == "Malkut" ) {
+					newGeometry = Instantiate( geometry[0] , thisTransform.position , Quaternion.identity ) as GameObject;
+					gameControllerScript.AddGeometry( newGeometry );
+					newGeometry.transform.parent = targetTransform.parent.GetChild( 4 );
+				}
+				if ( nearestArena.GetComponent< ArenaMeshColorController >().chamberType == "Sefirot" ) {
+					newGeometry = Instantiate( geometry[1] , thisTransform.position , Quaternion.identity ) as GameObject;
+					gameControllerScript.AddGeometry( newGeometry );
+					newGeometry.transform.parent = targetTransform.parent.GetChild( 4 );
+				}
+				if ( nearestArena.GetComponent< ArenaMeshColorController >().chamberType == "Kelipot" ) {
+					newGeometry = Instantiate( geometry[2] , thisTransform.position , Quaternion.identity ) as GameObject;
+					gameControllerScript.AddGeometry( newGeometry );
+					newGeometry.transform.parent = targetTransform.parent.GetChild( 4 );
+				}
 			} else {
 				gameControllerScript.AddArena( thisTransform.position );
 			}

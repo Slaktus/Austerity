@@ -35,6 +35,7 @@ public class GameController : MonoBehaviour {
 	private ArrayList arenaList = new ArrayList();
 	private ArrayList chamberList = new ArrayList();
 	private ArrayList enemyList = new ArrayList();
+	private ArrayList geometryList = new ArrayList();
 	private Transform thisTransform;
 	
 	void Awake () {
@@ -223,6 +224,50 @@ public class GameController : MonoBehaviour {
 				candidateDistance = Vector2.Distance( targetPosition , candidatePosition );
 				if ( shortestDistance > candidateDistance ) {
 					nearestCandidate = enemyMeshContainer.gameObject;
+					shortestDistance = candidateDistance;
+				}				
+			}
+		}
+		if ( nearestCandidate != null ) return nearestCandidate;
+		else return null;
+	}
+	
+	public ArrayList GetGeometryList () {
+		return geometryList;
+	}
+	
+	public void AddGeometry ( GameObject geometry ) {
+		if ( geometry != null ) geometryList.Add( geometry );
+	}
+	
+	public void RemoveGeometry( GameObject geometry ) {
+		if ( geometry != null ) {
+			Go.killAllTweensWithTarget( geometry );
+			geometryList.Remove( geometry );
+			Destroy( geometry );
+		}
+	}
+	
+	private GameObject geometryToReturn;
+	
+	public GameObject GetGeometryAt ( int index ) {
+		geometryToReturn = geometryList[ index ] as GameObject;
+		return geometryToReturn;
+	}
+	
+	private Transform geometryContainer;
+	
+	public GameObject FindNearestGeometry ( GameObject requestingObject ) {
+		nearestCandidate = null;
+		shortestDistance = Mathf.Infinity;
+		targetPosition = requestingObject.transform.position;
+		if ( geometryList.Count > 0 ) {
+			foreach ( GameObject candidate in geometryList ) {
+				geometryContainer = candidate.transform.GetChild( 0 );
+				candidatePosition = candidate.transform.position;
+				candidateDistance = Vector2.Distance( targetPosition , candidatePosition );
+				if ( shortestDistance > candidateDistance ) {
+					nearestCandidate = geometryContainer.gameObject;
 					shortestDistance = candidateDistance;
 				}				
 			}
