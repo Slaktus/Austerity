@@ -188,7 +188,7 @@ public class CursorController : MonoBehaviour {
 			}
 		} else {
 			PositionSwarmOnCursor();
-			if ( dragAffectsCamera && cameraTransform.rotation.eulerAngles != Vector3.zero )	cameraTransform.rotation = Quaternion.Slerp( cameraTransform.rotation , Quaternion.identity , ( cameraRotationSpeed / cameraRepositionDivider ) * Time.deltaTime );
+			if ( dragAffectsCamera && cameraTransform.rotation.eulerAngles != Vector3.zero ) cameraTransform.rotation = Quaternion.Slerp( cameraTransform.rotation , Quaternion.identity , ( cameraRotationSpeed / cameraRepositionDivider ) * Time.deltaTime );
 		}
 		
 		if ( targetTransform != null && holdingTarget && Input.GetKeyUp( KeyCode.Mouse1 ) ) {

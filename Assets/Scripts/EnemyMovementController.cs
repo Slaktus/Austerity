@@ -3,6 +3,15 @@ using System.Collections;
 
 public class EnemyMovementController : MonoBehaviour {
 	
+	public float timeUntilMovement = 0.5f;
+	
+	IEnumerator WaitToEnableMovement() {
+		yield return new WaitForSeconds( timeUntilMovement );
+		EnableMovement( true );
+		Debug.Log( "Movement enabled" );
+	}
+		
+	
 	private GameObject gameContainer;
 	private GameController gameControllerScript;
 	private Transform thisTransform;
@@ -16,6 +25,7 @@ public class EnemyMovementController : MonoBehaviour {
 	private Rigidbody thisRigidbody;
 	
 	void Awake () {
+		Debug.Log( "This happens anyway, right?" );
 		thisTransform = transform;
 		meshContainer = thisTransform.GetChild( 0 );
 		scaleControllerScript = meshContainer.GetComponent< EnemyScaleController >();
@@ -28,9 +38,10 @@ public class EnemyMovementController : MonoBehaviour {
 		gameControllerScript = gameContainer.GetComponent< GameController >();
 		nearestArena = gameControllerScript.FindNearestArena( gameObject );
 		arenaTransform = nearestArena.transform;
+		StartCoroutine( WaitToEnableMovement() );
 	}
 	
-	private bool isMovementEnabled = true;
+	private bool isMovementEnabled = false;
 	
 	public void EnableMovement( bool trueOrFalse ) {
 		if ( trueOrFalse ) isMovementEnabled = true;
@@ -130,7 +141,11 @@ public class EnemyMovementController : MonoBehaviour {
 	void LateUpdate () {
 		if ( isMovementEnabled ) {
 			nearestArena = gameControllerScript.FindNearestArena( gameObject );
-			arenaTransform = nearestArena.transform;
+			if ( nearestArena != null ) arenaTransform = nearestArena.transform;
+			else {
+				nearestArena = gameControllerScript.FindNearestArena( gameObject );
+				arenaTransform = nearestArena.transform;
+			}
 			directionToArena = arenaTransform.position - thisTransform.position;
 			distanceToSurface = directionToArena.magnitude - arenaTransform.localScale.x;
 			HandleMovement(movementDirection);

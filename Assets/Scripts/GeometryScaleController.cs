@@ -20,6 +20,7 @@ public class GeometryScaleController : MonoBehaviour {
 	
 	public Transform[] geometryComponents;
 	public float decrementTweenDuration  = 1.0f;
+	public float minScale = 5.0f;
 	
 	private Vector3 targetScale;
 	private Transform targetTransform;
@@ -31,7 +32,7 @@ public class GeometryScaleController : MonoBehaviour {
 	private Vector3 verticalTargetScale;
 	
 	public void DecrementScaleTween( float scaleDecrementMultiplier ) {
-			if ( !reachedMinScale ) {
+		if ( !reachedMinScale ) {
 			if ( horizontalDecrementTween != null ) horizontalDecrementTween.destroy();
 			if ( verticalDecrementTween != null ) verticalDecrementTween.destroy();
 			if ( horizontalLine != null ) {
@@ -44,7 +45,11 @@ public class GeometryScaleController : MonoBehaviour {
 				verticalDecrementTween = new GoTween( verticalLine , decrementTweenDuration , new GoTweenConfig().scale( verticalTargetScale , false ).setEaseType( GoEaseType.BackOut ) );
 				Go.addTween( verticalDecrementTween );
 			}
-			if ( horizontalTargetScale.x <= horizontalDecrementSize.x && horizontalLine != null || verticalTargetScale.y <= verticalDecrementSize.y && verticalLine != null ) {
+			if ( !reachedMinScale && horizontalTargetScale.x < minScale && horizontalLine != null ) {
+				reachedMinScale = true;
+				DestroyGeometryTween();
+			}
+			if ( !reachedMinScale && verticalTargetScale.y < minScale && verticalLine != null ) {
 				reachedMinScale = true;
 				DestroyGeometryTween();
 			}
@@ -54,10 +59,15 @@ public class GeometryScaleController : MonoBehaviour {
 	public float destroyGeometryDuration;
 	
 	private void DestroyGeometryTween () {
+		Go.killAllTweensWithTarget( thisTransform );
 		Go.to( thisTransform , destroyGeometryDuration , new GoTweenConfig().scale( Vector3.zero , false ).setEaseType( GoEaseType.BackIn ) ).setOnCompleteHandler( destroy => CleanUpGeometry() );
 	}
 	
+	public GameObject geometryExplosion;
+	private GameObject newExplosion;
+	
 	private void CleanUpGeometry () {
+		newExplosion = Instantiate( geometryExplosion , thisTransform.position , Quaternion.identity ) as GameObject;
 		gameControllerScript.RemoveGeometry( gameObject );
 	}
 	

@@ -19,7 +19,7 @@ public class WeaponBeamController : MonoBehaviour {
 	
 	private Transform targetTransform;
 	
-	void OnTriggerStay (Collider collision) {
+	void OnTriggerStay ( Collider collision ) {
 		targetTransform = collision.transform;
 		if ( targetTransform.tag == "Enemy" ) {
 			targetTransform.SendMessage( "IncrementScaleTween" , scaleIncrementMultiplier );

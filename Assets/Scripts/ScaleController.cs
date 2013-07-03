@@ -189,12 +189,12 @@ public class ScaleController : MonoBehaviour {
 	}
 	
 	public GameObject destroyArenaEffect;
-	private GameObject[] geometryList;
+	private Transform[] geometryList;
 		
 	private void DestroyArena() {
 		Instantiate( destroyArenaEffect , new Vector3( thisTransform.position.x , thisTransform.position.y , 0 ) , Quaternion.identity );
+		Debug.Log( "Remember to get rid of geometry" );
 		gameControllerScript.RemoveArena( thisTransform.parent.gameObject );
-		//geometryList = 
 	}
 	
 	private Vector3 incrementSize;

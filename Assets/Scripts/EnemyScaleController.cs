@@ -72,7 +72,7 @@ public class EnemyScaleController : MonoBehaviour {
 				GoTween maxTween = new GoTween( thisTransform , incrementTweenDuration , maxConfig );
 				destroyEnemyChain.append( maxTween );
 			}
-			thisTransform.SendMessageUpwards( "EnableMovement" , false );
+			thisTransform.parent.SendMessage( "EnableMovement" , false );
 			ScaleTweenProperty zeroScaleProperty = new ScaleTweenProperty( Vector3.zero , false );
 			GoEaseType zeroEaseType = GoEaseType.SineOut;
 			GoTweenConfig zeroConfig = new GoTweenConfig();

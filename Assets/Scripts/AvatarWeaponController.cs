@@ -167,7 +167,9 @@ public class AvatarWeaponController : MonoBehaviour {
 			if ( combinedRadii > Vector2.Distance( nearestArena.position , thisTransform.position ) ) {
 				nearestChamber = nearestArena.GetComponent< ArenaMeshColorController >().nearestChamber;
 				if ( nearestChamber != null ) chamberType = nearestChamber.transform.parent.parent.name;
+				else nearestChamber = gameControllerScript.FindNearestChamber( gameObject );
 				if (nearestChamber != bufferedChamber ) nearestChamber.GetComponent< ChamberMeshColorController >().ActivateChamber();
+				Debug.Log( "Something is up here" );
 			}
 		}
 		if ( bufferedChamber != null && bufferedChamber != nearestChamber ) {

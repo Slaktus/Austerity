@@ -40,6 +40,8 @@ public class GameController : MonoBehaviour {
 	
 	void Awake () {
 		Application.targetFrameRate = 60;
+		Time.timeScale = 1.0f;
+		Time.fixedDeltaTime = 0.02f;
 		thisTransform = transform;
 		skilltreeContainer = Instantiate( treeContainer , Vector3.zero , Quaternion.identity ) as GameObject;
 		skilltreeContainer.transform.parent = thisTransform;
