@@ -5,7 +5,7 @@ public class AvatarCollisionController : MonoBehaviour {
 	
 	private Transform targetTransform;
 	
-	void OnTriggerStay ( Collider collision ) {
+	void OnTriggerEnter ( Collider collision ) {
 		Debug.Log( "This is my other collider" );
 		targetTransform = collision.transform;
 		if ( targetTransform.parent != null && targetTransform.parent.name == "Enemy" ) Application.LoadLevel( Application.loadedLevel );

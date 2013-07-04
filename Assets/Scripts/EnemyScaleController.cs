@@ -104,9 +104,10 @@ public class EnemyScaleController : MonoBehaviour {
 		if ( !quickCleanup ) {
 			nearestArena = gameControllerScript.FindNearestArena( gameObject );
 			targetTransform = nearestArena.transform;
-			if ( targetScale.x > Vector2.Distance( targetTransform.position , thisTransform.position ) ) {
+			combinedRadii = thisTransform.localScale.x + targetTransform.localScale.x;
+			if ( combinedRadii > Vector2.Distance( targetTransform.position , thisTransform.position ) ) {
 				targetTransform.SendMessage( "ScaleUpTween" );
-				Debug.Log( nearestArena.GetComponent< ArenaMeshColorController >().chamberType );
+				/*Debug.Log( nearestArena.GetComponent< ArenaMeshColorController >().chamberType );
 				if ( nearestArena.GetComponent< ArenaMeshColorController >().chamberType == "Malkut" ) {
 					newGeometry = Instantiate( geometry[0] , thisTransform.position , Quaternion.identity ) as GameObject;
 					gameControllerScript.AddGeometry( newGeometry );
@@ -121,7 +122,7 @@ public class EnemyScaleController : MonoBehaviour {
 					newGeometry = Instantiate( geometry[2] , thisTransform.position , Quaternion.identity ) as GameObject;
 					gameControllerScript.AddGeometry( newGeometry );
 					newGeometry.transform.parent = targetTransform.parent.GetChild( 4 );
-				}
+				}*/
 			} else {
 				gameControllerScript.AddArena( thisTransform.position );
 			}

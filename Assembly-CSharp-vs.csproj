@@ -76,6 +76,7 @@
      <Compile Include="Assets\Scripts\GenerationColorController.cs" />
      <Compile Include="Assets\Scripts\GenerationCounterController.cs" />
      <Compile Include="Assets\Scripts\GenerationMeshColorController.cs" />
+     <Compile Include="Assets\Scripts\GeometryPositionController.cs" />
      <Compile Include="Assets\Scripts\GeometryScaleController.cs" />
      <Compile Include="Assets\Scripts\Kelipot.cs" />
      <Compile Include="Assets\Scripts\LogoSpinner.cs" />

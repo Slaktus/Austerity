@@ -4,10 +4,13 @@ using System.Collections;
 public class CursorController : MonoBehaviour {
 	
 	private Transform thisTransform;
+	private Transform currentAvatar;
 	
 	void Awake () {
 		thisTransform = transform;
 		Screen.showCursor = false;
+		currentAvatar = GameObject.FindGameObjectWithTag( "Avatar" ).transform;
+		bufferedCameraPosition = thisTransform.position;
 	}
 	
 	public GameObject swarm;
@@ -107,6 +110,15 @@ public class CursorController : MonoBehaviour {
 	public float dragTimeScale;
 	public float dragFixedDeltaTime;
 	public bool dragAffectsCamera;
+	public float zoomInDuration = 0.075f;
+	public float zoomOutDuration = 0.6f;
+	public float enemyZoomSize = 25f;
+	public float arenaZoomSize = 40f;
+	public float chamberZoomSize = 70f;
+	public float zoomTimeScale = 0.1f;
+	public float zoomFixedDelta = 0.002f;
+	public float minZoomDuration = 1.5f;
+	
 	private Vector3 mousePosition;
 	private GameObject nearestArena;
 	private GameObject nearestEnemy;
@@ -120,6 +132,8 @@ public class CursorController : MonoBehaviour {
 	private Transform targetTransform;
 	private Vector3 targetNewPosition;
 	private float damageTimer;
+	private Vector3 bufferedCameraPosition;
+	private float zoomTime;
 	
 	// Update is called once per frame
 	void Update () {
@@ -146,6 +160,10 @@ public class CursorController : MonoBehaviour {
 				Time.timeScale = dragTimeScale;
 				Time.fixedDeltaTime = dragFixedDeltaTime;
 				targetZOffset = 0;
+				bufferedCameraPosition = thisTransform.position;
+				Go.killAllTweensWithTarget( mainCamera.camera );
+				Go.to( mainCamera.camera , zoomInDuration , new GoTweenConfig().floatProp( "orthographicSize" , enemyZoomSize , false ).setEaseType( GoEaseType.BackIn ) );
+				zoomTime = Time.time + minZoomDuration;
 			} else {
 				nearestArena = gameControllerScript.FindNearestArena( gameObject );
 				targetTransform = nearestArena.transform;
@@ -157,6 +175,10 @@ public class CursorController : MonoBehaviour {
 					Time.timeScale = dragTimeScale;
 					Time.fixedDeltaTime = dragFixedDeltaTime;
 					targetZOffset = 0;
+					bufferedCameraPosition = cameraTransform.position;
+					Go.killAllTweensWithTarget( mainCamera.camera );
+					Go.to( mainCamera.camera , zoomInDuration , new GoTweenConfig().floatProp( "orthographicSize" , arenaZoomSize , false ).setEaseType( GoEaseType.BackIn ) );
+					zoomTime = Time.time + minZoomDuration;
 				} else {
 					nearestChamber = gameControllerScript.FindNearestChamber( gameObject );
 					targetTransform = nearestChamber.transform;
@@ -168,13 +190,21 @@ public class CursorController : MonoBehaviour {
 						Time.timeScale = dragTimeScale;
 						Time.fixedDeltaTime = dragFixedDeltaTime;
 						targetZOffset = 90;
+						bufferedCameraPosition = cameraTransform.position;
+						Go.killAllTweensWithTarget( mainCamera.camera );
+						Go.to( mainCamera.camera , zoomInDuration , new GoTweenConfig().floatProp( "orthographicSize" , chamberZoomSize , false ).setEaseType( GoEaseType.BackIn ) );
+						zoomTime = Time.time + minZoomDuration;
 					}
 				}
 			}
 		}
 		
 		if ( targetTransform != null && holdingTarget && Input.GetKey( KeyCode.Mouse1 ) ) {
-			if ( dragAffectsCamera ) cameraTransform.rotation = Quaternion.Slerp( cameraTransform.rotation , Quaternion.LookRotation( Vector3.Normalize( targetTransform.position - cameraTransform.position ) ) , cameraRotationSpeed * Time.deltaTime );
+			if ( dragAffectsCamera ) {
+				Time.timeScale = dragTimeScale;
+				Time.fixedDeltaTime = dragFixedDeltaTime;
+				cameraTransform.rotation = Quaternion.Slerp( cameraTransform.rotation , Quaternion.LookRotation( Vector3.Normalize( targetTransform.position - cameraTransform.position ) ) , cameraRotationSpeed * Time.deltaTime );
+			}
 			distanceFromTarget = targetTransform.localScale.x + targetOrbitDistance;
 			targetPositionOnPlane = new Vector3( targetTransform.position.x , targetTransform.position.y , thisTransform.position.z + distanceFromPlane );
 			mousePositionOnPlane = new Vector3( thisTransform.position.x , thisTransform.position.y , thisTransform.position.z + distanceFromPlane );
@@ -189,24 +219,37 @@ public class CursorController : MonoBehaviour {
 		} else {
 			PositionSwarmOnCursor();
 			if ( dragAffectsCamera && cameraTransform.rotation.eulerAngles != Vector3.zero ) cameraTransform.rotation = Quaternion.Slerp( cameraTransform.rotation , Quaternion.identity , ( cameraRotationSpeed / cameraRepositionDivider ) * Time.deltaTime );
+			
 		}
 		
-		if ( targetTransform != null && holdingTarget && Input.GetKeyUp( KeyCode.Mouse1 ) ) {
+		if (  Time.time > zoomTime && targetTransform != null && holdingTarget && Input.GetKeyUp( KeyCode.Mouse1 ) ) {
 			holdingTarget = false;
 			Time.timeScale = 1;
 			Time.fixedDeltaTime = 0.02f;
+			Go.killAllTweensWithTarget( mainCamera );
+			Go.to( mainCamera.camera , zoomOutDuration , new GoTweenConfig().floatProp( "orthographicSize" , 50 , false ).setEaseType( GoEaseType.BackOut ) );
 			if ( targetIsEnemy ) {
 				targetTransform.SendMessageUpwards( "EnableMovement" , true );
 				targetTransform.parent.rigidbody.AddForce( ( ( thisTransform.position + targetRelativePosition ) - targetNewPosition ) * enemyThrowForce );
 				targetIsEnemy = false;
-			} else {
-				targetTransform.parent.rigidbody.AddForce( ( ( thisTransform.position + targetRelativePosition ) - targetNewPosition ) * arenaThrowForce );
-			}
+			} else targetTransform.parent.rigidbody.AddForce( ( ( thisTransform.position + targetRelativePosition ) - targetNewPosition ) * arenaThrowForce );
 		} else if ( targetTransform == null && holdingTarget ) {
 			targetIsEnemy = false;
 			holdingTarget = false;
 			Time.timeScale = 1;
 			Time.fixedDeltaTime = 0.02f;
+			Go.killAllTweensWithTarget( mainCamera );
+			Go.to( mainCamera.camera , zoomOutDuration , new GoTweenConfig().floatProp( "orthographicSize" , 50 , false ).setEaseType( GoEaseType.BackOut ) );
+		} else if ( holdingTarget && Time.time > zoomTime && !Input.GetKey( KeyCode.Mouse1 ) ) {
+			holdingTarget = false;
+			Time.timeScale = 1;
+			Time.fixedDeltaTime = 0.02f;
+			Go.killAllTweensWithTarget( mainCamera );
+			Go.to( mainCamera.camera , zoomOutDuration , new GoTweenConfig().floatProp( "orthographicSize" , 50 , false ).setEaseType( GoEaseType.BackOut ) );
+			if ( targetIsEnemy ) {
+				targetTransform.SendMessageUpwards( "EnableMovement" , true );
+				targetIsEnemy = false;
+			}
 		}
 	}
 }

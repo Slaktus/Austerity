@@ -27,12 +27,12 @@ public class GeometryScaleController : MonoBehaviour {
 	private float combinedRadii;
 	private GoTween horizontalDecrementTween;
 	private GoTween verticalDecrementTween;
-	private bool reachedMinScale;
+	private bool hasReachedMinScale;
 	private Vector3 horizontalTargetScale;
 	private Vector3 verticalTargetScale;
 	
 	public void DecrementScaleTween( float scaleDecrementMultiplier ) {
-		if ( !reachedMinScale ) {
+		if ( hasReachedInitialScale && !hasReachedMinScale ) {
 			if ( horizontalDecrementTween != null ) horizontalDecrementTween.destroy();
 			if ( verticalDecrementTween != null ) verticalDecrementTween.destroy();
 			if ( horizontalLine != null ) {
@@ -45,12 +45,12 @@ public class GeometryScaleController : MonoBehaviour {
 				verticalDecrementTween = new GoTween( verticalLine , decrementTweenDuration , new GoTweenConfig().scale( verticalTargetScale , false ).setEaseType( GoEaseType.BackOut ) );
 				Go.addTween( verticalDecrementTween );
 			}
-			if ( !reachedMinScale && horizontalTargetScale.x < minScale && horizontalLine != null ) {
-				reachedMinScale = true;
+			if ( !hasReachedMinScale && horizontalTargetScale.x < minScale && horizontalLine != null ) {
+				hasReachedMinScale = true;
 				DestroyGeometryTween();
 			}
-			if ( !reachedMinScale && verticalTargetScale.y < minScale && verticalLine != null ) {
-				reachedMinScale = true;
+			if ( !hasReachedMinScale && verticalTargetScale.y < minScale && verticalLine != null ) {
+				hasReachedMinScale = true;
 				DestroyGeometryTween();
 			}
 		}
@@ -71,6 +71,12 @@ public class GeometryScaleController : MonoBehaviour {
 		gameControllerScript.RemoveGeometry( gameObject );
 	}
 	
+	private bool hasReachedInitialScale;
+	
+	private void ReachedInitialScale () {
+		hasReachedInitialScale = true;
+	}
+	
 	public float startScaleDuration;
 	public float defaultHitPoints = 8.0f;
 	public float currentHitPoints = 0;
@@ -87,7 +93,7 @@ public class GeometryScaleController : MonoBehaviour {
 		verticalDecrementSize = new Vector3( 0.0f , verticalInitialScale.y / currentHitPoints , 0.0f );
 		if ( geometryComponents.Length > 0 ) horizontalLine = geometryComponents[ 0 ];
 		if ( geometryComponents.Length > 1 ) verticalLine = geometryComponents[ 1 ];
-		if ( horizontalLine != null ) Go.to( horizontalLine , startScaleDuration , new GoTweenConfig().scale( horizontalInitialScale , false ).setEaseType( GoEaseType.BackOut ) );
+		if ( horizontalLine != null ) Go.to( horizontalLine , startScaleDuration , new GoTweenConfig().scale( horizontalInitialScale , false ).setEaseType( GoEaseType.BackOut ) ).setOnCompleteHandler( complete => ReachedInitialScale() ) ;
 		if ( verticalLine != null ) Go.to( verticalLine , startScaleDuration , new GoTweenConfig().scale( verticalInitialScale , false ).setEaseType( GoEaseType.BackOut ) );
 	}
 	

@@ -291,7 +291,7 @@ public class GameController : MonoBehaviour {
 			enemyList.Add( initialEnemy );
 		}
 		if ( arenaList.Count < 1 ) {
-			initialArena = Instantiate( arena , new Vector3( avatar.transform.position.x , avatar.transform.position.y , 1 * arenaStartHeight ) , Quaternion.identity ) as GameObject;
+			initialArena = Instantiate( arena , new Vector3( currentAvatar.transform.position.x , currentAvatar.transform.position.y , 1 * arenaStartHeight ) , Quaternion.identity ) as GameObject;
 			initialArena.transform.parent = arenaContainer.gameObject.transform;
 			initialArena.name = "Arena";
 			arenaList.Add( initialArena );

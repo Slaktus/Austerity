@@ -189,11 +189,30 @@ public class ScaleController : MonoBehaviour {
 	}
 	
 	public GameObject destroyArenaEffect;
-	private Transform[] geometryList;
+	public GameObject[] geometry;
+	private GameObject newGeometry;
+	private Vector3 newGeometryPosition;
 		
 	private void DestroyArena() {
 		Instantiate( destroyArenaEffect , new Vector3( thisTransform.position.x , thisTransform.position.y , 0 ) , Quaternion.identity );
-		Debug.Log( "Remember to get rid of geometry" );
+		if ( gameObject.GetComponent< ArenaMeshColorController >().chamberType == "Malkut" ) {
+			newGeometryPosition = thisTransform.parent.position;
+			newGeometryPosition.z = 0;
+			newGeometry = Instantiate( geometry[0] , newGeometryPosition , Quaternion.identity ) as GameObject;
+			gameControllerScript.AddGeometry( newGeometry );
+		}
+		if ( gameObject.GetComponent< ArenaMeshColorController >().chamberType == "Sefirot" ) {
+			newGeometryPosition = thisTransform.parent.position;
+			newGeometryPosition.z = 0;
+			newGeometry = Instantiate( geometry[1] , newGeometryPosition , Quaternion.identity ) as GameObject;
+			gameControllerScript.AddGeometry( newGeometry );
+		}
+		if ( gameObject.GetComponent< ArenaMeshColorController >().chamberType == "Kelipot" ) {
+			newGeometryPosition = thisTransform.parent.position;
+			newGeometryPosition.z = 0;
+			newGeometry = Instantiate( geometry[2] , newGeometryPosition , Quaternion.identity ) as GameObject;
+			gameControllerScript.AddGeometry( newGeometry );
+		}
 		gameControllerScript.RemoveArena( thisTransform.parent.gameObject );
 	}
 	

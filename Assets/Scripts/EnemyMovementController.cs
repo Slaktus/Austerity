@@ -144,11 +144,13 @@ public class EnemyMovementController : MonoBehaviour {
 			if ( nearestArena != null ) arenaTransform = nearestArena.transform;
 			else {
 				nearestArena = gameControllerScript.FindNearestArena( gameObject );
-				arenaTransform = nearestArena.transform;
+				if ( nearestArena != null ) arenaTransform = nearestArena.transform;
 			}
-			directionToArena = arenaTransform.position - thisTransform.position;
-			distanceToSurface = directionToArena.magnitude - arenaTransform.localScale.x;
-			HandleMovement(movementDirection);
+			if ( arenaTransform != null ) {
+				directionToArena = arenaTransform.position - thisTransform.position;
+				distanceToSurface = directionToArena.magnitude - arenaTransform.localScale.x;
+				HandleMovement(movementDirection);
+			}
 		}
 	}
 }
