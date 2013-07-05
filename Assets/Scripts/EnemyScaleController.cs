@@ -104,7 +104,7 @@ public class EnemyScaleController : MonoBehaviour {
 		if ( !quickCleanup ) {
 			nearestArena = gameControllerScript.FindNearestArena( gameObject );
 			targetTransform = nearestArena.transform;
-			combinedRadii = thisTransform.localScale.x + targetTransform.localScale.x;
+			combinedRadii = maxScale.x + targetTransform.localScale.x;
 			if ( combinedRadii > Vector2.Distance( targetTransform.position , thisTransform.position ) ) {
 				targetTransform.SendMessage( "ScaleUpTween" );
 				/*Debug.Log( nearestArena.GetComponent< ArenaMeshColorController >().chamberType );
@@ -200,7 +200,7 @@ public class EnemyScaleController : MonoBehaviour {
 		currentHitPoints = defaultHitPoints;
 		currentHitPoints += generation;
 		generation++;
-		maxScale *= 1 + ( generation / 25 );
+		maxScale *= 1 + ( generation / 10 );
 		incrementSize = ( maxScale - initialScale ) / currentHitPoints;
 	}
 	

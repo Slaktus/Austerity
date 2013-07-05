@@ -285,7 +285,8 @@ public class GameController : MonoBehaviour {
 		if ( enemyList.Count < 1 ) {
 			initialEnemy = Instantiate( enemy , currentAvatar.transform.position + Vector3.up * enemyStartDistance , Quaternion.identity ) as GameObject;
 			enemyScaleScript = initialEnemy.transform.GetChild( 0 ).GetComponent< EnemyScaleController >();
-			enemyScaleScript.generation = Mathf.CeilToInt( highestGeneration / 2 );
+			//if ( highestGeneration > 7 ) highestGeneration = 7;
+			//enemyScaleScript.generation = 0;
 			initialEnemy.transform.parent = enemyContainer.transform;
 			initialEnemy.name = "Enemy";
 			enemyList.Add( initialEnemy );

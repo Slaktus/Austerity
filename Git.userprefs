@@ -1,18 +1,18 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\EnemyMovementController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ScaleController.cs">
     <Files>
-      <File FileName="Assets\Scripts\GeometryScaleController.cs" Line="96" Column="227" />
+      <File FileName="Assets\Scripts\EnemyScaleController.cs" Line="203" Column="36" />
+      <File FileName="Assets\Scripts\GeometryScaleController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\AvatarSlowMoController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\CursorController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\EnemyMovementController.cs" Line="153" Column="5" />
+      <File FileName="Assets\Scripts\EnemyMovementController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\AvatarWeaponController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\AvatarCollisionController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GameController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\GameController.cs" Line="278" Column="20" />
       <File FileName="Assets\Scripts\GenerationMeshColorController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\EnemyMeshColorController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\EnemyScaleController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ScaleController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ScaleController.cs" Line="106" Column="114" />
       <File FileName="Assets\Scripts\ArenaMeshColorController.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>

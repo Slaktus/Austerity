@@ -4,17 +4,21 @@ using System.Collections;
 public class ScaleController : MonoBehaviour {
 	
 	public int arenaMaxGeneration = 3;
-	public float destroyArenaDelay = 0.3f;
+	public float destroyArenaDuration = 0.3f;
+	public GameObject arenaDetonationParticles;
+	
+	private GameObject detonationParticles;
 	
 	IEnumerator DelayedTrigger() {
 		if ( collider != null ) collider.enabled = false;
 		yield return new WaitForSeconds( scaleUpTweenDuration / 2 );
 		TriggerEnemiesAndArenas();
 		gameObject.SendMessage( "FlashInvert" );
+		if ( thisTransform.parent.name == "Arena" ) detonationParticles = Instantiate( arenaDetonationParticles , thisTransform.position , Quaternion.identity ) as GameObject;
 		if ( generation >= arenaMaxGeneration && type == 0 ) {
 			Go.killAllTweensWithTarget( thisTransform.parent );
 			canReset = false;
-			Go.to( thisTransform.parent , destroyArenaDelay , new GoTweenConfig().scale( Vector3.zero , false ).setEaseType( GoEaseType.ExpoIn ) ).setOnCompleteHandler( destroy => DestroyArena() );
+			Go.to( thisTransform.parent , destroyArenaDuration , new GoTweenConfig().scale( Vector3.zero , false ).setEaseType( GoEaseType.ExpoIn ) ).setOnCompleteHandler( destroy => DestroyArena() );
 		}
 		if ( canReset) StartCoroutine( DelayedTriggerReset() );
 		if ( isHubChamber ) {
@@ -34,12 +38,12 @@ public class ScaleController : MonoBehaviour {
 		collider.enabled = true;
 	}
 	
-	public float destroyChamberDelay = 0.6f;
+	public float destroyChamberDuration = 0.6f;
 	
 	IEnumerator DestroyHubChamber() {
 		//gameControllerScript.StartSlowMotion( 0.002f );
-		Go.to( thisTransform.parent , destroyChamberDelay , new GoTweenConfig().scale( Vector3.zero , false ).setEaseType( GoEaseType.ExpoIn ) );
-		yield return new WaitForSeconds( destroyChamberDelay + 0.25f );
+		Go.to( thisTransform.parent , destroyChamberDuration , new GoTweenConfig().scale( Vector3.zero , false ).setEaseType( GoEaseType.ExpoIn ) );
+		yield return new WaitForSeconds( destroyChamberDuration + 0.25f );
 		Go.killAllTweensWithTarget( thisTransform.parent );
 		thisTransform.parent.parent.GetChild( 1 ).gameObject.SetActive( true );
 		gameControllerScript.RemoveChamber( thisTransform.parent.gameObject );
@@ -63,6 +67,8 @@ public class ScaleController : MonoBehaviour {
 	public float scaleUpTweenDuration  = 1.0f;
 	public float maxScaleMultiplier = 1.025f;
 	public Vector3 targetScale;
+	public GameObject growParticleEffect;
+	
 	private GoTweenChain scaleChain;
 	private GameObject nearestChamber;
 	private Transform targetTransform;
@@ -72,6 +78,8 @@ public class ScaleController : MonoBehaviour {
 	private ArrayList enemyCandidateList = new ArrayList();
 	private ArrayList arenaCandidateList = new ArrayList();
 	private int scaleCount;
+	private GameObject growParticles;
+	private Vector3 growParticlePosition;
 	
 	public void ScaleUpTween () {
 		if ( scaleCount < generation && !isTriggered ) {
@@ -92,6 +100,10 @@ public class ScaleController : MonoBehaviour {
 			if ( scaleCount >= generation ) {
 				isTriggered = true;
 				StartCoroutine( DelayedTrigger() );
+			} else {
+				growParticlePosition = thisTransform.position;
+				growParticlePosition.z = 0;
+				growParticles = Instantiate( growParticleEffect , growParticlePosition , Quaternion.identity ) as GameObject;
 			}
 		}
 	}
@@ -195,7 +207,7 @@ public class ScaleController : MonoBehaviour {
 		
 	private void DestroyArena() {
 		Instantiate( destroyArenaEffect , new Vector3( thisTransform.position.x , thisTransform.position.y , 0 ) , Quaternion.identity );
-		if ( gameObject.GetComponent< ArenaMeshColorController >().chamberType == "Malkut" ) {
+		/*if ( gameObject.GetComponent< ArenaMeshColorController >().chamberType == "Malkut" ) {
 			newGeometryPosition = thisTransform.parent.position;
 			newGeometryPosition.z = 0;
 			newGeometry = Instantiate( geometry[0] , newGeometryPosition , Quaternion.identity ) as GameObject;
@@ -212,7 +224,7 @@ public class ScaleController : MonoBehaviour {
 			newGeometryPosition.z = 0;
 			newGeometry = Instantiate( geometry[2] , newGeometryPosition , Quaternion.identity ) as GameObject;
 			gameControllerScript.AddGeometry( newGeometry );
-		}
+		}*/
 		gameControllerScript.RemoveArena( thisTransform.parent.gameObject );
 	}
 	
