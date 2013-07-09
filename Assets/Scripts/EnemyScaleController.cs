@@ -106,6 +106,7 @@ public class EnemyScaleController : MonoBehaviour {
 			targetTransform = nearestArena.transform;
 			combinedRadii = maxScale.x + targetTransform.localScale.x;
 			if ( combinedRadii > Vector2.Distance( targetTransform.position , thisTransform.position ) ) {
+				explosionEffect = Instantiate( explosionLite , thisTransform.position , Quaternion.identity ) as GameObject;
 				targetTransform.SendMessage( "ScaleUpTween" );
 				/*Debug.Log( nearestArena.GetComponent< ArenaMeshColorController >().chamberType );
 				if ( nearestArena.GetComponent< ArenaMeshColorController >().chamberType == "Malkut" ) {
@@ -124,12 +125,11 @@ public class EnemyScaleController : MonoBehaviour {
 					newGeometry.transform.parent = targetTransform.parent.GetChild( 4 );
 				}*/
 			} else {
+				explosionEffect = Instantiate( explosion , thisTransform.position , Quaternion.identity ) as GameObject;
 				gameControllerScript.AddArena( thisTransform.position );
 			}
 			AddNewGeneration();
-		}
-		if ( quickCleanup ) explosionEffect = Instantiate( explosionLite , thisTransform.position , Quaternion.identity ) as GameObject;
-		else  explosionEffect = Instantiate( explosion , thisTransform.position , Quaternion.identity ) as GameObject;
+		} else explosionEffect = Instantiate( explosionLite , thisTransform.position , Quaternion.identity ) as GameObject;
 		AddCollectables();
 		Go.killAllTweensWithTarget( thisTransform );
 		Go.killAllTweensWithTarget( thisTransform.GetChild( 0 ).renderer.material );

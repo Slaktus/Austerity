@@ -8,6 +8,7 @@ public class ScaleController : MonoBehaviour {
 	public GameObject arenaDetonationParticles;
 	
 	private GameObject detonationParticles;
+	private GameObject arenaNearestAvatar;
 	
 	IEnumerator DelayedTrigger() {
 		if ( collider != null ) collider.enabled = false;
@@ -16,21 +17,24 @@ public class ScaleController : MonoBehaviour {
 		gameObject.SendMessage( "FlashInvert" );
 		if ( thisTransform.parent.name == "Arena" ) detonationParticles = Instantiate( arenaDetonationParticles , thisTransform.position , Quaternion.identity ) as GameObject;
 		if ( generation >= arenaMaxGeneration && type == 0 ) {
-			Go.killAllTweensWithTarget( thisTransform.parent );
-			canReset = false;
-			Go.to( thisTransform.parent , destroyArenaDuration , new GoTweenConfig().scale( Vector3.zero , false ).setEaseType( GoEaseType.ExpoIn ) ).setOnCompleteHandler( destroy => DestroyArena() );
+			arenaNearestAvatar = gameControllerScript.FindNearestArena( currentAvatar );
+			if ( gameObject != arenaNearestAvatar ) {
+				Go.killAllTweensWithTarget( thisTransform.parent );
+				canReset = false;
+				Go.to( thisTransform.parent , destroyArenaDuration , new GoTweenConfig().scale( Vector3.zero , false ).setEaseType( GoEaseType.ExpoIn ) ).setOnCompleteHandler( destroy => DestroyArena() );
+			} else ResetScaleTween();
 		}
 		if ( canReset) StartCoroutine( DelayedTriggerReset() );
 		if ( isHubChamber ) {
 			StartCoroutine( DestroyHubChamber() );
 		}
-		else if ( canReset ) ResetScaleTween();
+		//else if ( canReset ) ResetScaleTween();
 	}
 	
 	public float triggerResetDuration;
 	
 	IEnumerator DelayedTriggerReset() {
-		generation++;
+		//generation++;
 		yield return new WaitForSeconds( triggerResetDuration );
 		if ( isTriggered ) isTriggered = false;
 		incrementSize = ( maxScale - initialScale ) / generation;
@@ -100,7 +104,7 @@ public class ScaleController : MonoBehaviour {
 			if ( scaleCount >= generation ) {
 				isTriggered = true;
 				StartCoroutine( DelayedTrigger() );
-			} else {
+			} else if ( growParticleEffect != null ) {
 				growParticlePosition = thisTransform.position;
 				growParticlePosition.z = 0;
 				growParticles = Instantiate( growParticleEffect , growParticlePosition , Quaternion.identity ) as GameObject;
@@ -204,7 +208,7 @@ public class ScaleController : MonoBehaviour {
 	public GameObject[] geometry;
 	private GameObject newGeometry;
 	private Vector3 newGeometryPosition;
-		
+	
 	private void DestroyArena() {
 		Instantiate( destroyArenaEffect , new Vector3( thisTransform.position.x , thisTransform.position.y , 0 ) , Quaternion.identity );
 		/*if ( gameObject.GetComponent< ArenaMeshColorController >().chamberType == "Malkut" ) {
@@ -232,6 +236,7 @@ public class ScaleController : MonoBehaviour {
 	private GameObject rimOccluderContainer;
 	private GenerationCounterController generationScript;
 	private int type; //0 = arena, 1 = chamber
+	private GameObject currentAvatar;
 	
 	void Start () {
 		incrementSize = ( maxScale - initialScale ) / generation;
@@ -242,6 +247,6 @@ public class ScaleController : MonoBehaviour {
 		if ( generationScript != null ) generationScript.enabled = true;
 		if ( thisTransform.parent.name == "Arena" ) type = 0;
 		else type = 1;
-		//if ( type == 1 )chamberId = 3;
+		currentAvatar = GameObject.FindGameObjectWithTag( "Avatar" );
 	}
 }
