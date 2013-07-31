@@ -21,6 +21,7 @@ public class AvatarSlowMoController : MonoBehaviour {
 	void OnTriggerEnter ( Collider collision ) {
 		hitTransform = collision.transform;
 		if ( !isSlowMoActive && hitTransform.parent != null && hitTransform.parent.name == "Enemy" && Time.time > grazeCooldownTime ) {
+			mainCamera.transform.GetChild( 2 ).gameObject.GetComponent< ParticleSystem >().enableEmission = true;
 			Go.to( mainCamera.camera , zoomInDuration , new GoTweenConfig().floatProp( "orthographicSize" , zoomSize , false ).setEaseType( GoEaseType.BackIn ) );
 			hitPosition = collision.ClosestPointOnBounds( hitTransform.position );
 			isSlowMoActive = true;
@@ -62,6 +63,7 @@ public class AvatarSlowMoController : MonoBehaviour {
 			isSlowMoActive = false;
 			Time.timeScale = 1f;
 			Time.fixedDeltaTime = 0.02f;
+			mainCamera.transform.GetChild( 2 ).gameObject.GetComponent< ParticleSystem >().enableEmission = false;
 			Go.killAllTweensWithTarget( mainCamera );
 			Go.to( mainCamera.camera , zoomOutDuration , new GoTweenConfig().floatProp( "orthographicSize" , 50 , false ).setEaseType( GoEaseType.BackOut ) );
 			readyToReset = false;
@@ -69,6 +71,7 @@ public class AvatarSlowMoController : MonoBehaviour {
 			isSlowMoActive = false;
 			Time.timeScale = 1f;
 			Time.fixedDeltaTime = 0.02f;
+			mainCamera.transform.GetChild( 2 ).gameObject.GetComponent< ParticleSystem >().enableEmission = false;
 			Go.killAllTweensWithTarget( mainCamera );
 			Go.to( mainCamera.camera , zoomOutDuration , new GoTweenConfig().floatProp( "orthographicSize" , 50 , false ).setEaseType( GoEaseType.BackOut ) );
 			readyToReset = false;

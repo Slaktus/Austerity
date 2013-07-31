@@ -24,9 +24,6 @@ public class ArenaMeshColorController : MonoBehaviour {
 		mesh = transform.GetChild( 0 );
 		meshMaterial = mesh.renderer.material;
 		thisTransform = transform;
-		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
-		gameControllerScript = gameContainer.GetComponent< GameController >();
-		scaleControllerScript = gameObject.GetComponent< ScaleController >();
 	}
 	
 	public bool isInverted;
@@ -102,6 +99,9 @@ public class ArenaMeshColorController : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
+		gameControllerScript = gameContainer.GetComponent< GameController >();
+		scaleControllerScript = gameObject.GetComponent< ScaleController >();
 		currentAvatar = GameObject.FindGameObjectWithTag( "Avatar" );
 		avatarTransform = currentAvatar.transform;
 		StartCoroutine( CheckColor() );
@@ -110,6 +110,6 @@ public class ArenaMeshColorController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if ( !isFlashing && meshMaterial.color != targetColor ) TweenToTargetColor();
-		combinedRadii = avatarTransform.localScale.x + scaleControllerScript.maxScale.x;
+		if ( avatarTransform != null ) combinedRadii = avatarTransform.localScale.x + scaleControllerScript.maxScale.x;
 	}
 }

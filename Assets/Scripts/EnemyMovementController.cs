@@ -10,10 +10,7 @@ public class EnemyMovementController : MonoBehaviour {
 		EnableMovement( true );
 		Debug.Log( "Movement enabled" );
 	}
-		
-	
-	private GameObject gameContainer;
-	private GameController gameControllerScript;
+
 	private Transform thisTransform;
 	private Transform meshContainer;
 	private EnemyScaleController scaleControllerScript;
@@ -25,19 +22,14 @@ public class EnemyMovementController : MonoBehaviour {
 	private Rigidbody thisRigidbody;
 	
 	void Awake () {
-		Debug.Log( "This happens anyway, right?" );
 		thisTransform = transform;
 		meshContainer = thisTransform.GetChild( 0 );
 		scaleControllerScript = meshContainer.GetComponent< EnemyScaleController >();
 		colorControllerScript = meshContainer.GetComponent< EnemyMeshColorController >();
 		thisRigidbody = rigidbody;
 		avatar = GameObject.FindGameObjectWithTag( "Avatar" );
-		avatarTransform = avatar.transform;
+		if ( avatar != null ) avatarTransform = avatar.transform;
 		bufferedDirection = Vector3.Normalize( avatar.transform.position - transform.position );
-		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
-		gameControllerScript = gameContainer.GetComponent< GameController >();
-		nearestArena = gameControllerScript.FindNearestArena( gameObject );
-		arenaTransform = nearestArena.transform;
 		StartCoroutine( WaitToEnableMovement() );
 	}
 	
@@ -89,11 +81,13 @@ public class EnemyMovementController : MonoBehaviour {
 				bufferedDirection = direction;
 				thisRigidbody.AddForce( ( bufferedDirection * ( movementSpeed * Time.deltaTime ) ) * breachForceMultiplier );
 				currentBreachEffect = Instantiate( breachEffect , thisTransform.position + thisRigidbody.velocity.normalized * meshContainer.localScale.x , Quaternion.LookRotation( -thisRigidbody.velocity.normalized ) ) as GameObject;
+				currentBreachEffect.transform.parent = thisTransform.parent;
 			} else if ( hasBreached && distanceToSurface - meshContainer.localScale.x > 0 ) {
 				insideCircle = false;
 			} else if ( !hasBreached && distanceToSurface + meshContainer.localScale.x > 0 ) {
 				thisRigidbody.AddForce( ( bufferedDirection * ( movementSpeed * Time.deltaTime ) ) * breachForceMultiplier );
 				currentBreachEffect = Instantiate( breachEffect , thisTransform.position + thisRigidbody.velocity.normalized * meshContainer.localScale.x , Quaternion.LookRotation( -thisRigidbody.velocity.normalized ) ) as GameObject;
+				currentBreachEffect.transform.parent = thisTransform.parent;
 				insideCircle = true;
 				hasBreached = false;
 			}
@@ -104,21 +98,30 @@ public class EnemyMovementController : MonoBehaviour {
 				bufferedDirection = Vector2.zero;
 				gravityForce = Vector2.zero;
 				currentBreachEffect = Instantiate( breachEffect , thisTransform.position + thisRigidbody.velocity.normalized * meshContainer.localScale.x , Quaternion.LookRotation( -thisRigidbody.velocity.normalized ) ) as GameObject;
+				currentBreachEffect.transform.parent = thisTransform.parent;
 			} else if ( !hasBreached && distanceToSurface + meshContainer.localScale.x < 0 ) {
 				insideCircle = true;
 			} else if ( hasBreached && distanceToSurface - meshContainer.localScale.x < 0 ) {
 				insideCircle = false;
 				currentBreachEffect = Instantiate( breachEffect , thisTransform.position + thisRigidbody.velocity.normalized * meshContainer.localScale.x , Quaternion.LookRotation( -thisRigidbody.velocity.normalized ) ) as GameObject;
+				currentBreachEffect.transform.parent = thisTransform.parent;
 				hasBreached = true;
 			}
 		}
 	}
 	
 	public float generationSpeedBonus;
+	
 	private float generation;
+	private GameObject gameContainer;
+	private GameController gameControllerScript;
 	
 	// Use this for initialization
 	void Start () {
+		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
+		gameControllerScript = gameContainer.GetComponent< GameController >();
+		nearestArena = gameControllerScript.FindNearestArena( gameObject );
+		arenaTransform = nearestArena.transform;
 		generation = scaleControllerScript.generation;
 		movementSpeed += ( generationSpeedBonus * generation );
 	}
@@ -126,7 +129,7 @@ public class EnemyMovementController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if ( Time.time > avatarPositionTimer ) {
-			movementDirection = Vector3.Normalize(avatarTransform.position - thisTransform.position);
+			if ( avatarTransform != null ) movementDirection = Vector3.Normalize(avatarTransform.position - thisTransform.position);
 			avatarPositionTimer = Time.time + positionPollTimer;
 		}
 	
@@ -138,7 +141,7 @@ public class EnemyMovementController : MonoBehaviour {
 	private Quaternion bufferedRotation;
 	private Vector3 movementDirection;
 	
-	void LateUpdate () {
+	void FixedUpdate () {
 		if ( isMovementEnabled ) {
 			nearestArena = gameControllerScript.FindNearestArena( gameObject );
 			if ( nearestArena != null ) arenaTransform = nearestArena.transform;

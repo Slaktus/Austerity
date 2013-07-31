@@ -16,6 +16,7 @@ public class WeaponMissileController : MonoBehaviour {
 		trailTransform = thisTransform.GetChild( 1 );
 		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
 		gameControllerScript = gameContainer.GetComponent< GameController >();
+		gameControllerScript.AddMisc( gameObject );
 		expiryTime = Time.time + missileDuration;
 	}
 	

@@ -5,16 +5,11 @@ public class EnemyScaleController : MonoBehaviour {
 	
 	public float awakeScaleDuration;
 	public Vector3 initialScale;
+	
 	private Transform thisTransform;
-	private GameObject avatar;
-	private GameObject gameContainer;
-	private GameController gameControllerScript;
 	private EnemyMovementController movementScript;
 	
 	void Awake () {
-		avatar = GameObject.FindGameObjectWithTag( "Avatar" );
-		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
-		gameControllerScript = gameContainer.GetComponent< GameController >();
 		thisTransform = transform;
 		movementScript = thisTransform.parent.GetComponent< EnemyMovementController >();
 		transform.localScale = Vector3.zero;
@@ -71,6 +66,7 @@ public class EnemyScaleController : MonoBehaviour {
 				maxConfig.setEaseType( maxEaseType );
 				GoTween maxTween = new GoTween( thisTransform , incrementTweenDuration , maxConfig );
 				destroyEnemyChain.append( maxTween );
+				gameControllerScript.AddToChainCount( 2 );
 			}
 			thisTransform.parent.SendMessage( "EnableMovement" , false );
 			ScaleTweenProperty zeroScaleProperty = new ScaleTweenProperty( Vector3.zero , false );
@@ -107,6 +103,7 @@ public class EnemyScaleController : MonoBehaviour {
 			combinedRadii = maxScale.x + targetTransform.localScale.x;
 			if ( combinedRadii > Vector2.Distance( targetTransform.position , thisTransform.position ) ) {
 				explosionEffect = Instantiate( explosionLite , thisTransform.position , Quaternion.identity ) as GameObject;
+				explosionEffect.transform.parent = thisTransform.parent.parent;
 				targetTransform.SendMessage( "ScaleUpTween" );
 				/*Debug.Log( nearestArena.GetComponent< ArenaMeshColorController >().chamberType );
 				if ( nearestArena.GetComponent< ArenaMeshColorController >().chamberType == "Malkut" ) {
@@ -129,7 +126,10 @@ public class EnemyScaleController : MonoBehaviour {
 				gameControllerScript.AddArena( thisTransform.position );
 			}
 			AddNewGeneration();
-		} else explosionEffect = Instantiate( explosionLite , thisTransform.position , Quaternion.identity ) as GameObject;
+		} else {
+			explosionEffect = Instantiate( explosionLite , thisTransform.position , Quaternion.identity ) as GameObject;
+			explosionEffect.transform.parent = thisTransform.parent;
+		}
 		AddCollectables();
 		Go.killAllTweensWithTarget( thisTransform );
 		Go.killAllTweensWithTarget( thisTransform.GetChild( 0 ).renderer.material );
@@ -146,7 +146,7 @@ public class EnemyScaleController : MonoBehaviour {
 	
 	private void AddNewGeneration() {
 		currentAngle = newEnemyEjectionAngle;
-		directionToAvatar = Vector3.Normalize( thisTransform.position - avatar.transform.position );
+		if ( avatar != null ) directionToAvatar = Vector3.Normalize( thisTransform.position - avatar.transform.position );
 		for ( int i = 0 ; i < generation ; i++ ) {
 			newEnemy = Instantiate( transform.parent.gameObject , thisTransform.position , Quaternion.identity ) as GameObject;
 			newEnemy.name = "Enemy";
@@ -193,10 +193,17 @@ public class EnemyScaleController : MonoBehaviour {
 	public float defaultHitPoints = 8.0f;
 	public float currentHitPoints = 0;
 	public Vector3 maxScale;
+	
 	private Vector3 incrementSize;
+	private GameObject avatar;
+	private GameObject gameContainer;
+	private GameController gameControllerScript;
 	
 	// Use this for initialization
 	void Start () {
+		avatar = GameObject.FindGameObjectWithTag( "Avatar" );
+		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
+		gameControllerScript = gameContainer.GetComponent< GameController >();
 		currentHitPoints = defaultHitPoints;
 		currentHitPoints += generation;
 		generation++;

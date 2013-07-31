@@ -15,7 +15,10 @@ public class ScaleController : MonoBehaviour {
 		yield return new WaitForSeconds( scaleUpTweenDuration / 2 );
 		TriggerEnemiesAndArenas();
 		gameObject.SendMessage( "FlashInvert" );
-		if ( thisTransform.parent.name == "Arena" ) detonationParticles = Instantiate( arenaDetonationParticles , thisTransform.position , Quaternion.identity ) as GameObject;
+		if ( thisTransform.parent.name == "Arena" ) {
+			detonationParticles = Instantiate( arenaDetonationParticles , thisTransform.position , Quaternion.identity ) as GameObject;
+			gameControllerScript.AddToChainCount( 0 );
+		} else gameControllerScript.AddToChainCount( 1 );
 		if ( generation >= arenaMaxGeneration && type == 0 ) {
 			arenaNearestAvatar = gameControllerScript.FindNearestArena( currentAvatar );
 			if ( gameObject != arenaNearestAvatar ) {
@@ -53,6 +56,24 @@ public class ScaleController : MonoBehaviour {
 		gameControllerScript.RemoveChamber( thisTransform.parent.gameObject );
 	}
 	
+	public float chainCancelTimer = 3f;
+	
+	IEnumerator CheckForFullChain() {
+		yield return new WaitForSeconds( chainCancelTimer );
+		if ( scaleCount < generation ) {
+			targetScale = initialScale;
+			scaleCount = 0;
+			ScaleTweenProperty targetScaleProperty = new ScaleTweenProperty( targetScale , false );
+			GoTweenConfig resetConfig = new GoTweenConfig();
+			resetConfig.addTweenProperty( targetScaleProperty );
+			resetConfig.setEaseType( GoEaseType.BackInOut );
+			GoTween resetTween = new GoTween( thisTransform , scaleUpTweenDuration , resetConfig );
+			scaleChain.append( resetTween );
+			scaleChain.play();
+			gameObject.SendMessage( "DefaultToTargetColor" , SendMessageOptions.DontRequireReceiver );
+		}
+	}
+	
 	public Vector3 initialScale;
 	public bool canReset;
 	public Vector3 maxScale;
@@ -63,8 +84,6 @@ public class ScaleController : MonoBehaviour {
 	private GameController gameControllerScript;
 	
 	void Awake () {
-		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
-		gameControllerScript = gameContainer.GetComponent< GameController >();
 		thisTransform = transform;
 	}
 	
@@ -101,6 +120,10 @@ public class ScaleController : MonoBehaviour {
 			if ( scaleChain == null ) scaleChain = new GoTweenChain();
 			scaleChain.append( scaleUpTween );
 			scaleChain.play();
+			if ( isHubChamber ) {
+				StopCoroutine( "CheckForFullChain" );
+				StartCoroutine( CheckForFullChain() );
+			}
 			if ( scaleCount >= generation ) {
 				isTriggered = true;
 				StartCoroutine( DelayedTrigger() );
@@ -108,6 +131,7 @@ public class ScaleController : MonoBehaviour {
 				growParticlePosition = thisTransform.position;
 				growParticlePosition.z = 0;
 				growParticles = Instantiate( growParticleEffect , growParticlePosition , Quaternion.identity ) as GameObject;
+				growParticles.transform.parent = thisTransform.parent.parent;
 			}
 		}
 	}
@@ -206,11 +230,14 @@ public class ScaleController : MonoBehaviour {
 	
 	public GameObject destroyArenaEffect;
 	public GameObject[] geometry;
+	
 	private GameObject newGeometry;
 	private Vector3 newGeometryPosition;
+	private GameObject destroyParticles;
 	
 	private void DestroyArena() {
-		Instantiate( destroyArenaEffect , new Vector3( thisTransform.position.x , thisTransform.position.y , 0 ) , Quaternion.identity );
+		destroyParticles = Instantiate( destroyArenaEffect , new Vector3( thisTransform.position.x , thisTransform.position.y , 0 ) , Quaternion.identity ) as GameObject;
+		destroyParticles.transform.parent = thisTransform.parent;
 		/*if ( gameObject.GetComponent< ArenaMeshColorController >().chamberType == "Malkut" ) {
 			newGeometryPosition = thisTransform.parent.position;
 			newGeometryPosition.z = 0;
@@ -229,6 +256,7 @@ public class ScaleController : MonoBehaviour {
 			newGeometry = Instantiate( geometry[2] , newGeometryPosition , Quaternion.identity ) as GameObject;
 			gameControllerScript.AddGeometry( newGeometry );
 		}*/
+		Go.killAllTweensWithTarget( thisTransform );
 		gameControllerScript.RemoveArena( thisTransform.parent.gameObject );
 	}
 	
@@ -239,6 +267,8 @@ public class ScaleController : MonoBehaviour {
 	private GameObject currentAvatar;
 	
 	void Start () {
+		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
+		gameControllerScript = gameContainer.GetComponent< GameController >();
 		incrementSize = ( maxScale - initialScale ) / generation;
 		rimOccluderContainer = transform.parent.GetChild( 1 ).gameObject;
 		thisTransform.localScale = initialScale;

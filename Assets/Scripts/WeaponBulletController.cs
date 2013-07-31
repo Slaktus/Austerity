@@ -5,10 +5,13 @@ public class WeaponBulletController : MonoBehaviour {
 	
 	private Transform thisTransform;
 	private Transform trailTransform;
+	private GameController gameControllerScript;
 	
 	void Awake () {
 		thisTransform = transform;
 		trailTransform = thisTransform.GetChild( 1 );
+		gameControllerScript = GameObject.FindGameObjectWithTag( "GameContainer" ).GetComponent< GameController >();
+		gameControllerScript.AddMisc( gameObject );
 	}
 	
 	public float scaleIncrementMultiplier = 1.0f;
@@ -22,6 +25,7 @@ public class WeaponBulletController : MonoBehaviour {
 		targetTransform = collision.transform;
 		ContactPoint contact = collision.contacts[0];
 		hitEffect = Instantiate( bulletHitEffect , thisTransform.position , Quaternion.LookRotation( rigidbody.velocity.normalized , Vector3.forward ) ) as GameObject;
+		hitEffect.transform.parent = thisTransform.parent;
 		if ( targetTransform.tag == "Enemy" ) {
 			targetTransform.GetChild( 0 ).SendMessage( "IncrementScaleTween" , scaleIncrementMultiplier );
 			targetTransform.SendMessage( "IncrementDrag" , dragIncrementMultiplier );

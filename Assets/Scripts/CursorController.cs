@@ -4,12 +4,10 @@ using System.Collections;
 public class CursorController : MonoBehaviour {
 	
 	private Transform thisTransform;
-	private Transform currentAvatar;
 	
 	void Awake () {
 		thisTransform = transform;
 		Screen.showCursor = false;
-		currentAvatar = GameObject.FindGameObjectWithTag( "Avatar" ).transform;
 		bufferedCameraPosition = thisTransform.position;
 	}
 	
@@ -95,6 +93,7 @@ public class CursorController : MonoBehaviour {
 	void Start () {
 		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
 		gameControllerScript = gameContainer.GetComponent< GameController >();
+		gameControllerScript.AddMisc( gameObject );
 		mainCamera = GameObject.FindGameObjectWithTag( "MainCamera" );
 		cameraTransform = mainCamera.transform;
 		enemyList = gameControllerScript.GetEnemyList();
@@ -132,7 +131,7 @@ public class CursorController : MonoBehaviour {
 	private Transform targetTransform;
 	private Vector3 targetNewPosition;
 	private float damageTimer;
-	private Vector3 bufferedCameraPosition;
+	private Vector3 bufferedCameraPosition = Vector3.zero;
 	private float zoomTime;
 	
 	// Update is called once per frame
@@ -159,6 +158,7 @@ public class CursorController : MonoBehaviour {
 				targetIsEnemy = true;
 				Time.timeScale = dragTimeScale;
 				Time.fixedDeltaTime = dragFixedDeltaTime;
+				mainCamera.transform.GetChild( 0 ).gameObject.GetComponent< ParticleSystem >().enableEmission = true;
 				targetZOffset = 0;
 				bufferedCameraPosition = thisTransform.position;
 				Go.killAllTweensWithTarget( mainCamera.camera );
@@ -174,6 +174,7 @@ public class CursorController : MonoBehaviour {
 					holdingTarget = true;
 					Time.timeScale = dragTimeScale;
 					Time.fixedDeltaTime = dragFixedDeltaTime;
+					mainCamera.transform.GetChild( 0 ).gameObject.GetComponent< ParticleSystem >().enableEmission = true;
 					targetZOffset = 0;
 					bufferedCameraPosition = cameraTransform.position;
 					Go.killAllTweensWithTarget( mainCamera.camera );
@@ -189,6 +190,7 @@ public class CursorController : MonoBehaviour {
 						holdingTarget = true;
 						Time.timeScale = dragTimeScale;
 						Time.fixedDeltaTime = dragFixedDeltaTime;
+						mainCamera.transform.GetChild( 0 ).gameObject.GetComponent< ParticleSystem >().enableEmission = true;
 						targetZOffset = 90;
 						bufferedCameraPosition = cameraTransform.position;
 						Go.killAllTweensWithTarget( mainCamera.camera );
@@ -226,6 +228,7 @@ public class CursorController : MonoBehaviour {
 			holdingTarget = false;
 			Time.timeScale = 1;
 			Time.fixedDeltaTime = 0.02f;
+			mainCamera.transform.GetChild( 0 ).gameObject.GetComponent< ParticleSystem >().enableEmission = false;
 			Go.killAllTweensWithTarget( mainCamera );
 			Go.to( mainCamera.camera , zoomOutDuration , new GoTweenConfig().floatProp( "orthographicSize" , 50 , false ).setEaseType( GoEaseType.BackOut ) );
 			if ( targetIsEnemy ) {
@@ -238,12 +241,14 @@ public class CursorController : MonoBehaviour {
 			holdingTarget = false;
 			Time.timeScale = 1;
 			Time.fixedDeltaTime = 0.02f;
+			mainCamera.transform.GetChild( 0 ).gameObject.SetActive( false );
 			Go.killAllTweensWithTarget( mainCamera );
 			Go.to( mainCamera.camera , zoomOutDuration , new GoTweenConfig().floatProp( "orthographicSize" , 50 , false ).setEaseType( GoEaseType.BackOut ) );
 		} else if ( holdingTarget && Time.time > zoomTime && !Input.GetKey( KeyCode.Mouse1 ) ) {
 			holdingTarget = false;
 			Time.timeScale = 1;
 			Time.fixedDeltaTime = 0.02f;
+			mainCamera.transform.GetChild( 0 ).gameObject.GetComponent< ParticleSystem >().enableEmission = false;
 			Go.killAllTweensWithTarget( mainCamera );
 			Go.to( mainCamera.camera , zoomOutDuration , new GoTweenConfig().floatProp( "orthographicSize" , 50 , false ).setEaseType( GoEaseType.BackOut ) );
 			if ( targetIsEnemy ) {

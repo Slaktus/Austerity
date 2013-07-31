@@ -5,6 +5,7 @@ public class TrailController : MonoBehaviour {
 	
 	public bool isCollectableTrail;
 	public bool isProjectileTrail;
+	public bool isArena;
 	private Transform meshContainer;
 	private Transform mesh;
 	private Material meshMaterial;
@@ -17,17 +18,6 @@ public class TrailController : MonoBehaviour {
 		thisTrail = gameObject.GetComponent< TrailRenderer >();
 		thisTransform = transform;
 		parentTransform = transform.parent;
-		if ( isCollectableTrail ) {
-			mesh = transform.parent.transform;
-			meshContainer = mesh;
-		} else if ( !isProjectileTrail ) {
-			meshContainer = transform.parent.GetChild( 0 );
-			mesh = meshContainer.GetChild( 0 );
-			meshMaterial = mesh.renderer.material;
-			thisTrail.startWidth = meshContainer.localScale.x * 2;
-			trailMaterial = thisTrail.material;
-			trailMaterial.color = meshMaterial.color;
-		}
 	}
 	
 	public float durationAfterDetaching;
@@ -44,7 +34,17 @@ public class TrailController : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-	
+		if ( isCollectableTrail ) {
+			mesh = transform.parent.transform;
+			meshContainer = mesh;
+		} else if ( !isProjectileTrail && !isArena ) {
+			meshContainer = transform.parent.GetChild( 0 );
+			mesh = meshContainer.GetChild( 0 );
+			meshMaterial = mesh.renderer.material;
+			thisTrail.startWidth = meshContainer.localScale.x * 2;
+			trailMaterial = thisTrail.material;
+			trailMaterial.color = meshMaterial.color;
+		}
 	}
 	
 	public float trailAlpha;
@@ -53,10 +53,10 @@ public class TrailController : MonoBehaviour {
 	void Update () {
 		if ( !isDetached && isCollectableTrail ) {
 			thisTrail.startWidth = meshContainer.localScale.x;
-		} else if ( !isDetached && !isProjectileTrail ) {
+		} else if ( !isDetached && !isProjectileTrail && !isArena ) {
 			thisTrail.startWidth = meshContainer.localScale.x * 2;
 			trailMaterial.color = new Color( meshMaterial.color.r , meshMaterial.color.g , meshMaterial.color.b , trailAlpha );
-			thisTrail.time = meshContainer.localScale.x / 1.5f;
+			//thisTrail.time = meshContainer.localScale.x / 1.5f;
 		}
 		if ( isDetached && Time.time > destroyTime ) Destroy( gameObject );
 	}

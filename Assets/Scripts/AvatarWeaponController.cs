@@ -10,22 +10,14 @@ public class AvatarWeaponController : MonoBehaviour {
 	
 	private AvatarProjectileWeaponConfig currentProjectileConfig;
 	private Transform thisTransform;
-	private GameObject gameContainer;
-	private GameController gameControllerScript;
 	private ScaleController scaleControllerScript;
 	private GameObject nearestChamber;
-	private Transform chamberTransform;
+	private Transform chamberTransform = null;
 	private AvatarMovementController movementController;
 	private float defaultDrag;
 	
 	void Awake () {
 		thisTransform = transform;
-		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
-		gameControllerScript = gameContainer.GetComponent< GameController >();
-		nearestChamber = gameControllerScript.FindNearestChamber( gameObject );
-		chamberTransform = nearestChamber.transform;
-		scaleControllerScript = nearestChamber.GetComponent< ScaleController >();
-		currentChamberId = scaleControllerScript.chamberId;
 		movementController = gameObject.GetComponent<AvatarMovementController>();
 		defaultDrag = movementController.movementDrag;
 	}
@@ -54,6 +46,7 @@ public class AvatarWeaponController : MonoBehaviour {
 	
 	private void FireBullet ( Vector3 fireDirection ) {
 		fireEffect = Instantiate( projectileWeaponConfigs[ currentChamberId ].fireEffect , thisTransform.position + Vector3.back * 2 , Quaternion.LookRotation( mouseDirection , Vector3.forward ) ) as GameObject;
+		fireEffect.transform.parent = thisTransform.parent;
 		if ( projectileWeaponConfigs[ currentChamberId ].bulletAngleRange != 0 ) {
 			angleIncrement = projectileWeaponConfigs[ currentChamberId ].bulletAngleRange / projectileWeaponConfigs[ currentChamberId ].bulletsPerShot;
 			currentAngle = ( -projectileWeaponConfigs[ currentChamberId ].bulletAngleRange / 2 ) + ( angleIncrement / 2 );
@@ -63,12 +56,11 @@ public class AvatarWeaponController : MonoBehaviour {
 			launchDirection = Quaternion.AngleAxis( currentAngle , Vector3.forward ) * fireDirection;
 			currentAngle += angleIncrement;
 			newBullet = Instantiate( bullet , thisTransform.position , Quaternion.LookRotation( launchDirection.normalized ) ) as GameObject;
+			newBullet.transform.parent = thisTransform.parent;
 			bulletScript = newBullet.GetComponent< WeaponBulletController >();
 			bulletScript.pushbackForce = projectileWeaponConfigs[ currentChamberId ].pushbackForce;
 			bulletScript.scaleIncrementMultiplier = projectileWeaponConfigs[ currentChamberId ].scaleIncrementMultiplier;
 			bulletScript.dragIncrementMultiplier = projectileWeaponConfigs[ currentChamberId ].dragIncrementMultiplier;
-			newBullet.transform.parent = thisTransform.parent;
-			
 		}
 		bulletFireTime = Time.time;
 	}
@@ -81,6 +73,7 @@ public class AvatarWeaponController : MonoBehaviour {
 	
 	private void FireMissile (Vector3 fireDirection) {
 		fireEffect = Instantiate( missileWeaponConfigs[ currentChamberId ].fireEffect , thisTransform.position + Vector3.back * 2 , Quaternion.LookRotation( mouseDirection , Vector3.forward ) ) as GameObject;
+		fireEffect.transform.parent = thisTransform.parent;
 		if ( missileWeaponConfigs[ currentChamberId ].missileAngleRange != 0 ) {
 			angleIncrement = missileWeaponConfigs[ currentChamberId ].missileAngleRange / missileWeaponConfigs[ currentChamberId ].missilesPerShot;
 			currentAngle = ( -missileWeaponConfigs[ currentChamberId ].missileAngleRange / 2 ) + ( angleIncrement / 2 );
@@ -89,6 +82,7 @@ public class AvatarWeaponController : MonoBehaviour {
 			currentAngle += Random.Range( -missileWeaponConfigs[ currentChamberId ].missileAngleJitter , missileWeaponConfigs[ currentChamberId ].missileAngleJitter );
 			launchDirection = Quaternion.AngleAxis(currentAngle, Vector3.forward) * fireDirection;
 			newMissile = Instantiate( missile, transform.position, Quaternion.LookRotation( launchDirection.normalized ) ) as GameObject;
+			newMissile.transform.parent = thisTransform.parent;
 			missileScript = newMissile.GetComponent< WeaponMissileController >();
 			missileScript.missileDuration = missileWeaponConfigs[ currentChamberId ].missileDuration;
 			missileScript.explosionForce = missileWeaponConfigs[ currentChamberId ].explosionForce;
@@ -116,6 +110,7 @@ public class AvatarWeaponController : MonoBehaviour {
 	private void FireBeam (Vector3 fireDirection) {
 		if ( currentBeam == null ) {
 			currentBeam = Instantiate( beam , transform.position, Quaternion.LookRotation( fireDirection ) ) as GameObject;
+			currentBeam.transform.parent = thisTransform.parent;
 			rigidbody.AddForce( -fireDirection * beamWeaponConfigs[ currentChamberId ].initialBeamRecoilStrength );
 			beamScript = currentBeam.GetComponent< WeaponBeamController >();
 			beamScript.beamHeight = beamWeaponConfigs[ currentChamberId ].beamHeight;
@@ -138,22 +133,37 @@ public class AvatarWeaponController : MonoBehaviour {
 		movementController.movementDrag = defaultDrag;
 	}
 	
+	private GameObject gameContainer;
+	private GameController gameControllerScript;
+	private GameObject weaponReport;
+	private GameObject weaponType;
+	private GameObject weaponLevel;
+	
+	
 	// Use this for initialization
 	void Start () {
-	
+		weaponReport = GameObject.FindGameObjectWithTag( "WeaponReport" );
+		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
+		gameControllerScript = gameContainer.GetComponent< GameController >();
+		nearestChamber = gameControllerScript.FindNearestChamber( gameObject );
+		chamberTransform = nearestChamber.transform;
+		scaleControllerScript = nearestChamber.GetComponent< ScaleController >();
+		currentChamberId = scaleControllerScript.chamberId;
 	}
 	
 	public GameObject bulletFireEffect;
+
 	
 	private Vector3 mouseDirection;
 	private Transform nearestArena;
 	private string chamberType;
+	private string bufferedChamberType;
 	private float combinedRadii;
 	private GameObject bufferedChamber;
 	
 	// Update is called once per frame
 	void Update () {
-		nearestArena = gameControllerScript.FindNearestArena( gameObject ).transform;
+		if ( gameControllerScript.gameObject != null ) nearestArena = gameControllerScript.FindNearestArena( gameObject ).transform;
 		if ( nearestChamber != null ) {
 			bufferedChamber = nearestChamber;
 			combinedRadii = nearestArena.GetComponent< ScaleController >().maxScale.x + nearestChamber.GetComponent< ScaleController >().maxScale.x;
@@ -166,7 +176,17 @@ public class AvatarWeaponController : MonoBehaviour {
 			combinedRadii = nearestArena.GetComponent< ScaleController >().maxScale.x + ( thisTransform.localScale.x * 2 );
 			if ( combinedRadii > Vector2.Distance( nearestArena.position , thisTransform.position ) ) {
 				nearestChamber = nearestArena.GetComponent< ArenaMeshColorController >().nearestChamber;
-				if ( nearestChamber != null ) chamberType = nearestChamber.transform.parent.parent.name;
+				if ( nearestChamber != null ) {
+					chamberType = nearestChamber.transform.parent.parent.name;
+					if ( string.IsNullOrEmpty( bufferedChamberType ) ) {
+						bufferedChamberType = chamberType;
+					}
+					if ( chamberType != bufferedChamberType ) {
+						weaponReport.GetComponent< WeaponReportController >().PrepareText( chamberType.ToUpper() , "LEVEL" + ( scaleControllerScript.chamberId + 1 ) );
+						weaponReport.GetComponent< WeaponReportController >().StartChain();
+					}
+					bufferedChamberType = chamberType;
+				}
 				else nearestChamber = gameControllerScript.FindNearestChamber( gameObject );
 				if (nearestChamber != bufferedChamber ) nearestChamber.GetComponent< ChamberMeshColorController >().ActivateChamber();
 				Debug.Log( "Something is up here" );

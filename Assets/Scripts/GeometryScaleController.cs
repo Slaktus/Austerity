@@ -64,7 +64,7 @@ public class GeometryScaleController : MonoBehaviour {
 	}
 	
 	public GameObject geometryExplosion;
-	private GameObject newExplosion;
+	private GameObject newExplosion = null;
 	
 	private void CleanUpGeometry () {
 		newExplosion = Instantiate( geometryExplosion , thisTransform.position , Quaternion.identity ) as GameObject;

@@ -44,6 +44,8 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Controller.cs" />
+     <Compile Include="Assets\GrabEffectController.cs" />
      <Compile Include="Assets\Scripts\ArenaMeshColorController.cs" />
      <Compile Include="Assets\Scripts\AvatarBeamWeaponConfig.cs" />
      <Compile Include="Assets\Scripts\AvatarCollisionController.cs" />
@@ -63,6 +65,7 @@
      <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig08.cs" />
      <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig09.cs" />
      <Compile Include="Assets\Scripts\BeamWeaponConfigs\BeamConfig10.cs" />
+     <Compile Include="Assets\Scripts\ChainCounterController.cs" />
      <Compile Include="Assets\Scripts\ChamberMeshColorController.cs" />
      <Compile Include="Assets\Scripts\CollectableController.cs" />
      <Compile Include="Assets\Scripts\CursorController.cs" />
@@ -70,6 +73,7 @@
      <Compile Include="Assets\Scripts\EnemyMeshColorController.cs" />
      <Compile Include="Assets\Scripts\EnemyMovementController.cs" />
      <Compile Include="Assets\Scripts\EnemyScaleController.cs" />
+     <Compile Include="Assets\Scripts\FontController.cs" />
      <Compile Include="Assets\Scripts\FromMeshColorController.cs" />
      <Compile Include="Assets\Scripts\GameCameraController.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
@@ -108,10 +112,12 @@
      <Compile Include="Assets\Scripts\SkillTreeConfiguration.cs" />
      <Compile Include="Assets\Scripts\SkillTreeController.cs" />
      <Compile Include="Assets\Scripts\TOOCOMPLEXGenerationCounterController.cs" />
+     <Compile Include="Assets\Scripts\TextContainerController.cs" />
      <Compile Include="Assets\Scripts\TrailController.cs" />
      <Compile Include="Assets\Scripts\WeaponBeamController.cs" />
      <Compile Include="Assets\Scripts\WeaponBulletController.cs" />
      <Compile Include="Assets\Scripts\WeaponMissileController.cs" />
+     <Compile Include="Assets\Scripts\WeaponReportController.cs" />
      <None Include="Assets\Materials\Shaders\UnlitColorAlpha.shader" />
      <None Include="Assets\Materials\Shaders\EarlyInvertColor.shader" />
      <None Include="Assets\Materials\Shaders\InvertColorTexture.shader" />

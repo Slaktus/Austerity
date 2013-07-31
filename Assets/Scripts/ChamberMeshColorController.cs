@@ -7,8 +7,8 @@ public class ChamberMeshColorController : MonoBehaviour {
 	private Transform mesh;
 	private Material meshMaterial;
 	private GameObject currentAvatar;
-	private Transform avatarTransform;
-	private Transform thisTransform;
+	private Transform avatarTransform = null;
+	private Transform thisTransform = null;
 	private GoTweenChain avatarEnterTween;
 	private GoTween scaleUpTween;
 	private GoTween scaleDownTween;
@@ -43,14 +43,19 @@ public class ChamberMeshColorController : MonoBehaviour {
 		targetColor = initialColor;
 	}
 	
+	public void DefaultToTargetColor () {
+		targetColor = defaultColor;
+	}
+	
 	public void ActivateChamber () {
-		Debug.Log( "Activate chamber" );
 		targetColor = initialColor;
-		currentAvatar.GetComponent< AvatarWeaponController >().currentChamberId = scaleControllerScript.chamberId;
+		if ( currentAvatar == null ) {
+			currentAvatar = GameObject.FindGameObjectWithTag( "Avatar" );
+			currentAvatar.GetComponent< AvatarWeaponController >().currentChamberId = scaleControllerScript.chamberId;
+		} else if ( currentAvatar != null ) currentAvatar.GetComponent< AvatarWeaponController >().currentChamberId = scaleControllerScript.chamberId;
 	}
 	
 	public void DeactivateChamber () {
-		Debug.Log( "Deactivate chamber" );
 		if (!scaleControllerScript.isTriggered ) targetColor = Color.white;
 	}
 	

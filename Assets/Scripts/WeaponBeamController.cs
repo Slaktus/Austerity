@@ -6,12 +6,16 @@ public class WeaponBeamController : MonoBehaviour {
 	private Transform thisTransform;
 	private Transform envelopeTransform;
 	private Transform particles;
+	private GameController gameControllerScript;
 	
 	void Awake () {
 		thisTransform = transform;
 		thisTransform.localScale = Vector3.one;
 		envelopeTransform = thisTransform.GetChild( 0 ).GetChild( 0 );
 		particles = thisTransform.GetChild( 1 ).GetChild( 0 );
+		gameControllerScript = GameObject.FindGameObjectWithTag( "GameContainer" ).GetComponent< GameController >();
+		gameControllerScript.AddMisc( gameObject );
+
 	}
 	
 	public float scaleIncrementMultiplier = 1.0f;

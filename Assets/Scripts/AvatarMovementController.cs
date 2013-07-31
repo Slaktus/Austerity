@@ -7,10 +7,7 @@ public class AvatarMovementController : MonoBehaviour {
 	private Rigidbody thisRigidbody;
 	private GameObject gameContainer;
 	private GameObject mainCamera;
-	private Transform cameraTransform;
-	private GameController gameControllerScript;
-	private GameObject nearestArena;
-	private Transform arenaTransform;
+	private Transform cameraTransform = null;
 	
 	void Awake () {
 		bufferedRotation = Quaternion.AngleAxis( -90 , Vector3.right );
@@ -20,9 +17,6 @@ public class AvatarMovementController : MonoBehaviour {
 		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
 		mainCamera = GameObject.FindGameObjectWithTag( "MainCamera" );
 		cameraTransform = mainCamera.transform;
-		gameControllerScript = gameContainer.GetComponent< GameController >();
-		nearestArena = gameControllerScript.FindNearestArena( gameObject );
-		arenaTransform = nearestArena.transform;
 	}
 	
 	public float inputLowerThreshold;
@@ -68,6 +62,7 @@ public class AvatarMovementController : MonoBehaviour {
 			if ( bufferedDirection == Vector2.zero ) {
 				if ( !hasBreached ) {
 					currentBreachEffect = Instantiate( breachEffect , thisTransform.position , Quaternion.LookRotation( -thisRigidbody.velocity.normalized ) ) as GameObject;
+					currentBreachEffect.transform.parent = thisTransform.parent;
 					hasBreached = true;
 				}
 				if ( direction == Vector2.zero ) {
@@ -78,7 +73,7 @@ public class AvatarMovementController : MonoBehaviour {
 					isDodging = true;
 				} else if ( !isDodging ) {
 					bufferedDirection = rigidbody.velocity.normalized;
-					rigidbody.AddForce( ( bufferedDirection * movementSpeed ) * breachForceMultiplier );
+					rigidbody.AddForce( ( bufferedDirection * movementSpeed ) * breachForceMultiplier , ForceMode.Acceleration );
 				}
 			}
 			Vector2 directionToCenter = arenaTransform.position - thisTransform.position;
@@ -91,7 +86,7 @@ public class AvatarMovementController : MonoBehaviour {
 			gravityForce += directionToCenter * ( movementSpeed * breachArcSpeedMultiplier );
 			rigidbody.AddForce( new Vector3( gravityForce.x , gravityForce.y , 0 ) );
 			if ( !isDodging ) {
-				rigidbody.AddForce( ( tangentialInputOnly * movementSpeed ) * tangentialMovementSpeedMultiplier );
+				rigidbody.AddForce( ( tangentialInputOnly * movementSpeed ) * tangentialMovementSpeedMultiplier , ForceMode.Acceleration );
 				nearestArena = gameControllerScript.FindNearestArena( gameObject );
 				arenaTransform = nearestArena.transform;
 			}
@@ -99,7 +94,10 @@ public class AvatarMovementController : MonoBehaviour {
 			nearestArena = gameControllerScript.FindNearestArena( gameObject );
 			arenaTransform = nearestArena.transform;
 			if ( bufferedDirection != Vector2.zero ) {
-				if ( hasBreached ) currentBreachEffect = Instantiate( breachEffect , thisTransform.position , Quaternion.LookRotation( -thisRigidbody.velocity.normalized ) ) as GameObject;
+				if ( hasBreached ) {
+					currentBreachEffect = Instantiate( breachEffect , thisTransform.position , Quaternion.LookRotation( -thisRigidbody.velocity.normalized ) ) as GameObject;
+					currentBreachEffect.transform.parent = thisTransform.parent;
+				}
 				bufferedDirection = Vector2.zero;
 				gravityForce = Vector2.zero;
 			}
@@ -111,18 +109,28 @@ public class AvatarMovementController : MonoBehaviour {
 		}
 	}
 	
+	private GameController gameControllerScript;
+	private GameObject nearestArena;
+	private Transform arenaTransform;
+	
+	void Start () {
+		gameControllerScript = gameContainer.GetComponent< GameController >();
+		nearestArena = gameControllerScript.FindNearestArena( gameObject );
+		arenaTransform = nearestArena.transform;
+	}
+	
 	private Vector2 movementDirection;
 	private string chamberType;
 	
 	// Update is called once per frame
 	void Update () {
-		movementDirection = InputToMovementDirection();
 	}
 	
 	private Vector2 directionToArena;
 	private Quaternion bufferedRotation;
 	
-	void LateUpdate () {
+	void FixedUpdate () {
+		movementDirection = InputToMovementDirection();
 		if ( arenaTransform != null ) {
 			directionToArena = arenaTransform.position - thisTransform.position;
 			distanceToSurface = directionToArena.magnitude - ( arenaTransform.localScale.x );

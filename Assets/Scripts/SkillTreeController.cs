@@ -9,7 +9,7 @@ public class SkillTreeController : MonoBehaviour {
 	private Transform thisTransform;
 	private int treeCount;
 	
-	void Awake () {
+	void Start () {
 		thisTransform = transform;
 		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
 		gameControllerScript = gameContainer.GetComponent< GameController >();

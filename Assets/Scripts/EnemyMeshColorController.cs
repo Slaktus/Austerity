@@ -8,12 +8,8 @@ public class EnemyMeshColorController : MonoBehaviour {
 	private Material meshMaterial;
 	private EnemyScaleController scaleScript;
 	private Color targetColor;
-	private GameObject gameContainer;
-	private GameController gameControllerScript;
 	
 	void Awake() {
-		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
-		gameControllerScript = gameContainer.GetComponent< GameController >();
 		thisTransform = transform;
 		mesh = thisTransform.GetChild( 0 );
 		meshMaterial = mesh.renderer.material;
@@ -67,13 +63,18 @@ public class EnemyMeshColorController : MonoBehaviour {
 	}
 	
 	public Color[] colors;
+	
 	private Vector3 initialScale;
 	private Vector3 maxScale;
 	private Vector3 scaleRange;
 	private Vector3 scaleIncrement;
+	private GameObject gameContainer;
+	private GameController gameControllerScript;
 	
 	// Use this for initialization
 	void Start () {
+		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
+		gameControllerScript = gameContainer.GetComponent< GameController >();
 		initialScale = scaleScript.initialScale;
 		maxScale = scaleScript.maxScale;
 		scaleRange = maxScale - initialScale;

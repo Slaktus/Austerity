@@ -28,8 +28,14 @@ public class GenerationMeshColorController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if ( !chamberOverride ) {
-			if ( isInverted ) thisMaterial.color = new Color( 1.0f - meshMaterial.color.r , 1.0f - meshMaterial.color.g , 1.0f - meshMaterial.color.b , 1.0f );
-			else thisMaterial.color = new Color(  meshMaterial.color.r , meshMaterial.color.g , meshMaterial.color.b , 1.0f );
+			if ( meshMaterial != null ) {
+				if ( isInverted ) thisMaterial.color = new Color( 1.0f - meshMaterial.color.r , 1.0f - meshMaterial.color.g , 1.0f - meshMaterial.color.b , 1.0f );
+				else thisMaterial.color = new Color(  meshMaterial.color.r , meshMaterial.color.g , meshMaterial.color.b , 1.0f );
+			}
+			else if ( meshMaterial == null ) {
+				colorControllerScript = counterContainer.gameObject.GetComponent< GenerationColorController >();
+				meshMaterial = colorControllerScript.meshMaterial;
+			}
 		}
 	}
 }
