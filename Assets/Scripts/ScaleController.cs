@@ -18,7 +18,10 @@ public class ScaleController : MonoBehaviour {
 		if ( thisTransform.parent.name == "Arena" ) {
 			detonationParticles = Instantiate( arenaDetonationParticles , thisTransform.position , Quaternion.identity ) as GameObject;
 			gameControllerScript.AddToChainCount( 0 );
-		} else gameControllerScript.AddToChainCount( 1 );
+		} else {
+			detonationParticles = Instantiate( arenaDetonationParticles , thisTransform.position + ( Vector3.back * 110 ) , Quaternion.identity ) as GameObject;
+			gameControllerScript.AddToChainCount( 1 );
+		}
 		if ( generation >= arenaMaxGeneration && type == 0 ) {
 			arenaNearestAvatar = gameControllerScript.FindNearestArena( currentAvatar );
 			if ( gameObject != arenaNearestAvatar ) {
@@ -52,6 +55,8 @@ public class ScaleController : MonoBehaviour {
 		Go.to( thisTransform.parent , destroyChamberDuration , new GoTweenConfig().scale( Vector3.zero , false ).setEaseType( GoEaseType.ExpoIn ) );
 		yield return new WaitForSeconds( destroyChamberDuration + 0.25f );
 		Go.killAllTweensWithTarget( thisTransform.parent );
+		destroyParticles = Instantiate( destroyArenaEffect , new Vector3( thisTransform.position.x , thisTransform.position.y , 0 ) , Quaternion.identity ) as GameObject;
+		destroyParticles.transform.parent = thisTransform.parent;
 		thisTransform.parent.parent.GetChild( 1 ).gameObject.SetActive( true );
 		gameControllerScript.RemoveChamber( thisTransform.parent.gameObject );
 	}
@@ -237,7 +242,7 @@ public class ScaleController : MonoBehaviour {
 	
 	private void DestroyArena() {
 		destroyParticles = Instantiate( destroyArenaEffect , new Vector3( thisTransform.position.x , thisTransform.position.y , 0 ) , Quaternion.identity ) as GameObject;
-		destroyParticles.transform.parent = thisTransform.parent;
+		destroyParticles.transform.parent = thisTransform.parent.parent;
 		/*if ( gameObject.GetComponent< ArenaMeshColorController >().chamberType == "Malkut" ) {
 			newGeometryPosition = thisTransform.parent.position;
 			newGeometryPosition.z = 0;

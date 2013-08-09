@@ -111,7 +111,7 @@ public class AvatarWeaponController : MonoBehaviour {
 		if ( currentBeam == null ) {
 			currentBeam = Instantiate( beam , transform.position, Quaternion.LookRotation( fireDirection ) ) as GameObject;
 			currentBeam.transform.parent = thisTransform.parent;
-			rigidbody.AddForce( -fireDirection * beamWeaponConfigs[ currentChamberId ].initialBeamRecoilStrength );
+			rigidbody.AddForce( -fireDirection * beamWeaponConfigs[ currentChamberId ].initialBeamRecoilStrength , ForceMode.Impulse );
 			beamScript = currentBeam.GetComponent< WeaponBeamController >();
 			beamScript.beamHeight = beamWeaponConfigs[ currentChamberId ].beamHeight;
 			beamScript.beamWidth = beamWeaponConfigs[ currentChamberId ].beamWidth;

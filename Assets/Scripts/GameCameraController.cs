@@ -12,13 +12,17 @@ public class GameCameraController : MonoBehaviour {
 		if ( trueOrFalse ) {
 			Go.to( screenFurnitureContainer , 0.05f , new GoTweenConfig().position( new Vector3( 0 , 110 , 0 ) , false ).setEaseType( GoEaseType.BackIn ) );
 			Go.to( screenFurnitureContainer , 0.025f , new GoTweenConfig().scale( Vector3.one * 2 , false ).setEaseType( GoEaseType.ExpoIn ) );
-			
+			Vector3 cameraTargetPoint = bufferedTargetPosition - camera.ScreenToWorldPoint( Input.mousePosition );
+			cameraTargetPoint.z = -thisTransform.position.z;
+			Quaternion cameraRotationTarget = Quaternion.LookRotation( cameraTargetPoint );
+			//Go.to( thisTransform , 0.025f , new GoTweenConfig().rotation( cameraRotationTarget , false ).setEaseType( GoEaseType.ExpoInOut ) ).setOnCompleteHandler( deathCam => isDeathCamera = true );
+			isDeathCamera = true;
 		} else {
 			Go.killAllTweensWithTarget( camera );
 			Go.to( camera , cameraResetDuration , new GoTweenConfig().floatProp( "orthographicSize" , orthographicSize , false ).setEaseType( GoEaseType.ExpoInOut ) );
 			Go.to( screenFurnitureContainer , 1 , new GoTweenConfig().position( Vector3.zero , false ).setEaseType( GoEaseType.BackOut ) );
 			Go.to( screenFurnitureContainer , 0.25f , new GoTweenConfig().scale( Vector3.one , false ).setEaseType( GoEaseType.BackOut ) );
-			isDeathCamera = trueOrFalse;
+			isDeathCamera = false;
 		}
 	}
 	
@@ -29,10 +33,9 @@ public class GameCameraController : MonoBehaviour {
 	private Vector3 newPosition;
 	
 	private void DeathCamera () {
-		thisTransform.rotation = Quaternion.Slerp( thisTransform.rotation ,  Quaternion.LookRotation( bufferedTargetPosition - thisTransform.position ) , Time.deltaTime * deathCameraRotationSpeed );
-		if ( cursorTransform != null ) newPosition = Vector3.Lerp( thisTransform.position , thisTransform.position + ( new Vector3( cursorTransform.position.x , cursorTransform.position.y , thisTransform.position.z ) / 3 ) , Time.deltaTime * deathCameraMovementSpeed );
-		newPosition.z = -deathCameraDistance;
-		thisTransform.position = newPosition;
+		Quaternion bufferedRotation = thisTransform.rotation;
+		Quaternion newRotation = Quaternion.Slerp( bufferedRotation , Quaternion.LookRotation( bufferedTargetPosition - camera.ScreenToWorldPoint( Input.mousePosition ) ) , Time.deltaTime * deathCameraRotationSpeed );
+		thisTransform.rotation = newRotation;
 	}
 	
 	public float deadZoneRadius;
@@ -79,7 +82,7 @@ public class GameCameraController : MonoBehaviour {
 	private Vector3 bufferedTargetPosition;
 	
 	// Update is called once per frame
-	void LateUpdate () {
+	void Update () {
 		if ( target != null && !isDeathCamera ) {
 				if ( targetTransform != null ) bufferedTargetPosition = targetTransform.position;
 				FollowCamera();

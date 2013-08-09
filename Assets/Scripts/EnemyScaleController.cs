@@ -127,8 +127,9 @@ public class EnemyScaleController : MonoBehaviour {
 			}
 			AddNewGeneration();
 		} else {
+			Debug.Log( "Happens on chain?" );
 			explosionEffect = Instantiate( explosionLite , thisTransform.position , Quaternion.identity ) as GameObject;
-			explosionEffect.transform.parent = thisTransform.parent;
+			explosionEffect.transform.parent = thisTransform.parent.parent;
 		}
 		AddCollectables();
 		Go.killAllTweensWithTarget( thisTransform );
@@ -193,6 +194,7 @@ public class EnemyScaleController : MonoBehaviour {
 	public float defaultHitPoints = 8.0f;
 	public float currentHitPoints = 0;
 	public Vector3 maxScale;
+	public Vector3 maxScaleLimit;
 	
 	private Vector3 incrementSize;
 	private GameObject avatar;
@@ -204,10 +206,12 @@ public class EnemyScaleController : MonoBehaviour {
 		avatar = GameObject.FindGameObjectWithTag( "Avatar" );
 		gameContainer = GameObject.FindGameObjectWithTag( "GameContainer" );
 		gameControllerScript = gameContainer.GetComponent< GameController >();
+		if ( generation > 7 ) generation = 7;
 		currentHitPoints = defaultHitPoints;
 		currentHitPoints += generation;
 		generation++;
 		maxScale *= 1 + ( generation / 10 );
+		if ( maxScale.sqrMagnitude > maxScaleLimit.sqrMagnitude ) maxScale = maxScaleLimit;
 		incrementSize = ( maxScale - initialScale ) / currentHitPoints;
 	}
 	
